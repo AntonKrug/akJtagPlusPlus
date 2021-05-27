@@ -46,7 +46,7 @@ namespace jtag {
 		const uint16_t rowFirstX   = 5;
 		const uint16_t blockWidth  = 100;
 		const uint16_t rowSecondX  = 120;
-		const uint16_t lineSpacing = 10;
+		const uint16_t lineSpacing = 14;
 		const uint16_t fontHeight  = 8;
 		const uint16_t lineHeight  = fontHeight + lineSpacing;
 
