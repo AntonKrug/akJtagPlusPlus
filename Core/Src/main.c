@@ -126,14 +126,7 @@ int main(void)
   BSP_LCD_DisplayOn();
 
   BSP_LCD_SetFont(&Font8);
-  BSP_LCD_SetTextColor(LCD_COLOR_RED);
-  BSP_LCD_SetBackColor(LCD_COLOR_GREEN);
 
-  BSP_LCD_DrawCircle(100, 100, 50);
-
-  BSP_LCD_DrawRect(61, 0, (BSP_LCD_GetXSize()-61), (BSP_LCD_GetYSize()-60));
-
-  BSP_LCD_DisplayString(5, 5, "Ahoj");
   jtag_tap_display();
   /* USER CODE END 2 */
 
