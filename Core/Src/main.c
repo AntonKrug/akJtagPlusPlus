@@ -18,6 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "jtag_c_connector.h"
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -133,6 +134,7 @@ int main(void)
   BSP_LCD_DrawRect(61, 0, (BSP_LCD_GetXSize()-61), (BSP_LCD_GetYSize()-60));
 
   BSP_LCD_DisplayString(5, 5, "Ahoj");
+  jtag_tap_display();
   /* USER CODE END 2 */
 
   /* Infinite loop */
