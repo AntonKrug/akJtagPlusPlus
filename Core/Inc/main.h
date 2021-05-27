@@ -64,10 +64,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define PC14_OSC32_IN_Pin GPIO_PIN_14
-#define PC14_OSC32_IN_GPIO_Port GPIOC
-#define PC15_OSC32_OUT_Pin GPIO_PIN_15
-#define PC15_OSC32_OUT_GPIO_Port GPIOC
 #define A0_Pin GPIO_PIN_0
 #define A0_GPIO_Port GPIOF
 #define A1_Pin GPIO_PIN_1
@@ -94,16 +90,10 @@ void Error_Handler(void);
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define SDNWE_Pin GPIO_PIN_0
 #define SDNWE_GPIO_Port GPIOC
-#define NCS_MEMS_SPI_Pin GPIO_PIN_1
-#define NCS_MEMS_SPI_GPIO_Port GPIOC
 #define CSX_Pin GPIO_PIN_2
 #define CSX_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0
 #define B1_GPIO_Port GPIOA
-#define MEMS_INT1_Pin GPIO_PIN_1
-#define MEMS_INT1_GPIO_Port GPIOA
-#define MEMS_INT2_Pin GPIO_PIN_2
-#define MEMS_INT2_GPIO_Port GPIOA
 #define B5_Pin GPIO_PIN_3
 #define B5_GPIO_Port GPIOA
 #define VSYNC_Pin GPIO_PIN_4
@@ -112,10 +102,6 @@ void Error_Handler(void);
 #define G2_GPIO_Port GPIOA
 #define ACP_RST_Pin GPIO_PIN_7
 #define ACP_RST_GPIO_Port GPIOA
-#define OTG_FS_PSO_Pin GPIO_PIN_4
-#define OTG_FS_PSO_GPIO_Port GPIOC
-#define OTG_FS_OC_Pin GPIO_PIN_5
-#define OTG_FS_OC_GPIO_Port GPIOC
 #define R3_Pin GPIO_PIN_0
 #define R3_GPIO_Port GPIOB
 #define R6_Pin GPIO_PIN_1
@@ -158,14 +144,6 @@ void Error_Handler(void);
 #define G4_GPIO_Port GPIOB
 #define G5_Pin GPIO_PIN_11
 #define G5_GPIO_Port GPIOB
-#define OTG_HS_ID_Pin GPIO_PIN_12
-#define OTG_HS_ID_GPIO_Port GPIOB
-#define VBUS_HS_Pin GPIO_PIN_13
-#define VBUS_HS_GPIO_Port GPIOB
-#define OTG_HS_DM_Pin GPIO_PIN_14
-#define OTG_HS_DM_GPIO_Port GPIOB
-#define OTG_HS_DP_Pin GPIO_PIN_15
-#define OTG_HS_DP_GPIO_Port GPIOB
 #define D13_Pin GPIO_PIN_8
 #define D13_GPIO_Port GPIOD
 #define D14_Pin GPIO_PIN_9
@@ -210,16 +188,12 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 #define TP_INT1_Pin GPIO_PIN_15
 #define TP_INT1_GPIO_Port GPIOA
-#define R2_Pin GPIO_PIN_10
-#define R2_GPIO_Port GPIOC
 #define D2_Pin GPIO_PIN_0
 #define D2_GPIO_Port GPIOD
 #define D3_Pin GPIO_PIN_1
 #define D3_GPIO_Port GPIOD
 #define G7_Pin GPIO_PIN_3
 #define G7_GPIO_Port GPIOD
-#define B2_Pin GPIO_PIN_6
-#define B2_GPIO_Port GPIOD
 #define G3_Pin GPIO_PIN_10
 #define G3_GPIO_Port GPIOG
 #define B3_Pin GPIO_PIN_11
