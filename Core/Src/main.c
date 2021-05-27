@@ -110,6 +110,8 @@ int main(void)
   MX_I2C3_Init();
   MX_SPI5_Init();
   /* USER CODE BEGIN 2 */
+  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_SET);
 
   /* Initialize the LCD */
   BSP_LCD_Init();
