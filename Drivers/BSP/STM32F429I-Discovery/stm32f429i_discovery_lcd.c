@@ -541,7 +541,7 @@ void BSP_LCD_DisplayChar(uint16_t Xpos, uint16_t Ypos, uint8_t Ascii)
   *                @arg LEFT_MODE   
   */
 
-void BSP_LCD_DisplayString(uint16_t X, uint16_t Y, char *pText)
+void BSP_LCD_DisplayString(uint16_t X, uint16_t Y, const char *pText)
 {
 	BSP_LCD_DisplayStringAt(X, Y, (uint8_t *)pText, LEFT_MODE);
 }
