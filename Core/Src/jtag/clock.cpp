@@ -17,9 +17,9 @@ namespace jtag {
     const int apb2Clock = 168'000'000;
 
     // These TIMx ARR dividers ....
-    const std::array dividers{4, 5, 6, 7, 8, 10, 14, 20, 42};
+    constexpr std::array dividers{4, 5, 6, 7, 8, 10, 14, 20, 42};
 
-    const int lookupTableSize = dividers.size();
+    constexpr int lookupTableSize = dividers.size();
 
     template <int lookupIndex>
     constexpr std::array<uint32_t, lookupTableSize> populateFrequenciesTable() {
@@ -37,12 +37,15 @@ namespace jtag {
 
 
     // ... will produe the following frequencies
-    const auto frequencies = populateFrequenciesTable<0>();
+    constexpr auto frequencies = populateFrequenciesTable<0>();
 
 
     int currentIndex = 0;
 
-    void display
+    void display() {
+
+    }
+
   }
 
 }
