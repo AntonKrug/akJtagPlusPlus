@@ -149,6 +149,7 @@ int main(void)
     buf[2] = 7;
 
     USBD_HID_SendReport (&hUsbDeviceHS, buf, 4);
+    HAL_Delay(50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -627,6 +628,12 @@ static void MX_GPIO_Init(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
+
+  static int count = 0;
+  count++;
+  if ((count % 1000) == 0) {
+    HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
+  }
 
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM6) {
