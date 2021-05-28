@@ -144,13 +144,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-
     static uint8_t buf[4] = {0};
     buf[1] = 7;
     buf[2] = 7;
 
     USBD_HID_SendReport (&hUsbDeviceHS, buf, 4);
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
