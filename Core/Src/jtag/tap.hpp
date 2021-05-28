@@ -6,8 +6,8 @@
  */
 
 
-#ifndef SRC_JTAG_JTAG_HPP_
-#define SRC_JTAG_JTAG_HPP_
+#ifndef SRC_JTAG_TAP_HPP_
+#define SRC_JTAG_TAP_HPP_
 
 
 #ifdef __cplusplus
@@ -30,5 +30,5 @@ namespace jtag {
 }
 #endif
 
-#endif /* SRC_JTAG_JTAG_HPP_ */
+#endif /* SRC_JTAG_TAP_HPP_ */
 

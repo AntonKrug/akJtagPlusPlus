@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "jtag_c_connector.h"
+#include "tap_c_connector.h"
 #include "usbd_hid.h"
 
 /* USER CODE END Includes */
@@ -631,7 +631,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
   static int count = 0;
   count++;
-  if ((count % 1000) == 0) {
+  if ((count % 500) == 0) {
     HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
   }
 

@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-#include "jtag.hpp"
+#include "tap.hpp"
 
 void jtag_tap_display() {
   jtag::tap::display();

@@ -5,8 +5,8 @@
  *      Author: anton.krug@gmail.com
  */
 
-#ifndef SRC_JTAG_JTAG_C_CONNECTOR_H_
-#define SRC_JTAG_JTAG_C_CONNECTOR_H_
+#ifndef SRC_JTAG_TAP_C_CONNECTOR_H_
+#define SRC_JTAG_TAP_C_CONNECTOR_H_
 
 
 #ifdef __cplusplus
@@ -19,4 +19,4 @@ void jtag_tap_display(void);
 }
 #endif
 
-#endif /* SRC_JTAG_JTAG_C_CONNECTOR_H_ */
+#endif /* SRC_JTAG_TAP_C_CONNECTOR_H_ */
