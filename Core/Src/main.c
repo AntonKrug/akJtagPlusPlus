@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "tap_c_connector.h"
+#include "jtag_c_connector.h"
 #include "usbd_hid.h"
 
 /* USER CODE END Includes */
@@ -138,6 +139,8 @@ int main(void)
 
 
   HAL_TIM_Base_Start_IT(&htim1);
+
+  jtag_setup();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -146,11 +149,7 @@ int main(void)
   {
     // JTAG pin 2
 
-    GPIOE->ODR = 1 << 2;
-    GPIOE->ODR = 0 << 2;
-    GPIOE->ODR = 1 << 2;
-    GPIOE->ODR = 0 << 2;
-
+    jtag_loop();
 
 //    static uint8_t buf[4] = {0};
 //    buf[1] = 7;
