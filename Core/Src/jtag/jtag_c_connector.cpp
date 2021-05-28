@@ -11,6 +11,8 @@ extern "C" {
 #endif
 
 #include "jtag_c_connector.h"
+#include "bitbang.hpp"
+
 
 void jtag_setup() {
 
@@ -18,8 +20,9 @@ void jtag_setup() {
 
 
 void jtag_loop() {
-
+  jtag::bitbang::demo();
 }
+
 
 #ifdef __cplusplus
 }
