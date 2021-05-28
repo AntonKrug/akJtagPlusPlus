@@ -20,24 +20,12 @@ namespace jtag {
 
     // Serializing the data with clock included
     template<uint32_t N, uint8_t CHUNK_SIZE>
-    __attribute__((optimize("-Ofast")))
+    __attribute__((optimize("-Os")))
     int shiftTdi()  {
         uint32_t shift = N;
         for (int i=0; i<CHUNK_SIZE; i++) {
             GPIOE->ODR = ((shift & 1) << JTAG_TDI);
-            asm("nop");
-            asm("nop");
-            asm("nop");
-            asm("nop");
-            asm("nop");
-            asm("nop");
             GPIOE->ODR = ((shift & 1) << JTAG_TDI) | (1 << JTAG_TCK);
-            asm("nop");
-            asm("nop");
-            asm("nop");
-            asm("nop");
-            asm("nop");
-            asm("nop");
             shift = shift >> 1;
         }
         return N;
