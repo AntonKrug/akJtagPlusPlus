@@ -2,7 +2,7 @@
  * jtag.hpp
  *
  *  Created on: May 27, 2021
- *      Author: Fredy
+ *      Author: anton.krug@gmail.com
  */
 
 

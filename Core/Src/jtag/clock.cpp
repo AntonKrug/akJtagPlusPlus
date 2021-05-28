@@ -2,7 +2,7 @@
  * speed.cpp
  *
  *  Created on: May 28, 2021
- *      Author: Fredy
+ *      Author: anton.krug@gmail.com
  */
 
 #include <cstdint>
