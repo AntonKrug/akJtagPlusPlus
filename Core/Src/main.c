@@ -144,12 +144,20 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    static uint8_t buf[4] = {0};
-    buf[1] = 7;
-    buf[2] = 7;
+    // JTAG pin 2
 
-    USBD_HID_SendReport (&hUsbDeviceHS, buf, 4);
-    HAL_Delay(50);
+    GPIOE->ODR = 1 << 2;
+    GPIOE->ODR = 0 << 2;
+    GPIOE->ODR = 1 << 2;
+    GPIOE->ODR = 0 << 2;
+
+
+//    static uint8_t buf[4] = {0};
+//    buf[1] = 7;
+//    buf[2] = 7;
+//
+//    USBD_HID_SendReport (&hUsbDeviceHS, buf, 4);
+//    HAL_Delay(50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
