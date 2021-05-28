@@ -19,37 +19,39 @@ namespace jtag {
     const uint8_t JTAG_TDO = 5;
 
     // Serializing the data with clock included
-    template <int CHUNK_SIZE>
-    constexpr std::array<uint16_t, CHUNK_SIZE> shift(const uint32_t input, const uint8_t pin) {
-        std::array<uint16_t, CHUNK_SIZE> ret = {};
-        uint32_t shift = input;
+    template<uint32_t N, uint8_t CHUNK_SIZE>
+    __attribute__((optimize("-Ofast")))
+    constexpr int shiftTdi()  {
+        uint32_t shift = N;
         for (int i=0; i<CHUNK_SIZE; i++) {
-            ret[i] = (input & 0x1) << pin;
-            shift  = shift >> 1;
+            GPIOE->ODR = ((shift & 1) << JTAG_TDI);
+            GPIOE->ODR = ((shift & 1) << JTAG_TDI);
+            GPIOE->ODR = ((shift & 1) << JTAG_TDI) | (1 << JTAG_TCK);
+            GPIOE->ODR = ((shift & 1) << JTAG_TDI) | (1 << JTAG_TCK);
+            shift = shift >> 1;
         }
-        return ret;
+        return N;
     }
 
-    const auto shifted = shift<8>(128, JTAG_TDO);
-
-    // TDI lookup generation
-    const int tdiTableSize = 256;
+    // Generating function table for each input
+    const int shiftTdiTableSize = 256;
 
     template <int lookupIndex>
-    constexpr std::array<std::array<uint16_t, 8>, tdiTableSize> populateTdiTable() {
-        auto previousResult = populateTdiTable<lookupIndex + 1>();
-
-        previousResult[lookupIndex] = shift<8>((uint32_t)lookupIndex, JTAG_TDI);
-        return previousResult;
+    constexpr std::array<int(*)(), shiftTdiTableSize> populateShitTdiTableSize() {
+        auto result = populateShitTdiTableSize<lookupIndex + 1>();
+        result[lookupIndex] = shiftTdi<lookupIndex, 8>;
+        return result;
     }
 
 
     template <>
-    constexpr std::array<std::array<uint16_t, 8>, tdiTableSize> populateTdiTable<tdiTableSize>() {
-        return { 0 };
+    constexpr std::array<int(*)(), shiftTdiTableSize> populateShitTdiTableSize<shiftTdiTableSize>() {
+        std::array<int(*)(), shiftTdiTableSize> lookupTable = { 0 };
+        return lookupTable;
     }
 
-    constexpr auto tdiLookup = populateTdiTable<0>();
+
+    const auto shiftFunctions = populateShitTdiTableSize<0>();
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,10 +60,7 @@ extern "C" {
     // Test demo
     void demo() {
       for (int number = 0; number < 256; number++) {
-        for (int clock = 0; clock < 8; clock++) {
-          GPIOE->ODR = tdiLookup[number][clock];
-          GPIOE->ODR = tdiLookup[number][clock] | 1 << JTAG_TCK;
-        }
+        shiftFunctions[number]();
       }
     }
 
