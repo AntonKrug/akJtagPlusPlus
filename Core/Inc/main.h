@@ -64,6 +64,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define JTAG_TCK_Pin GPIO_PIN_2
+#define JTAG_TCK_GPIO_Port GPIOE
+#define JTAG_TMS_Pin GPIO_PIN_3
+#define JTAG_TMS_GPIO_Port GPIOE
+#define JTAG_TDI_Pin GPIO_PIN_4
+#define JTAG_TDI_GPIO_Port GPIOE
+#define JTAG_TDO_Pin GPIO_PIN_5
+#define JTAG_TDO_GPIO_Port GPIOE
 #define A0_Pin GPIO_PIN_0
 #define A0_GPIO_Port GPIOF
 #define A1_Pin GPIO_PIN_1
