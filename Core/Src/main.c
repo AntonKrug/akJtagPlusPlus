@@ -19,10 +19,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "jtag_c_connector.h"
+#include "usbd_hid.h"
 
 /* USER CODE END Includes */
 
@@ -113,6 +115,7 @@ int main(void)
   MX_I2C3_Init();
   MX_SPI5_Init();
   MX_TIM1_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
   // Set Green and Red LEDs on
@@ -143,6 +146,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+    static uint8_t buf[4] = {0};
+    buf[1] = 7;
+    buf[2] = 7;
+
+    USBD_HID_SendReport (&hUsbDeviceHS, buf, 4);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -172,7 +181,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 336;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 3;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
