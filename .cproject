@@ -151,6 +151,8 @@
                                 								
                                 <option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.nothreadsafestatics.1781623999" name="Disable thread-safe initialization of local static objects (-fno-threadsafe-statics)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.nothreadsafestatics" useByScannerDiscovery="false" value="true" valueType="boolean"/>
                                 								
+                                <option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.453548299" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard.value.gnupp17" valueType="enumerated"/>
+                                								
                                 <inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.658967747" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
                                 							
                             </tool>
@@ -448,5 +450,7 @@
         </scannerConfigBuildInfo>
         	
     </storageModule>
+    	
+    <storageModule moduleId="refreshScope"/>
     
 </cproject>
