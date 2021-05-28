@@ -11,7 +11,6 @@
 #include "stm32f429xx.h"
 
 namespace jtag {
-
   namespace bitbang {
 
     const uint8_t JTAG_TCK = 2;
@@ -53,6 +52,11 @@ namespace jtag {
 
     constexpr auto tdiLookup = populateTdiTable<0>();
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    // Test demo
     void demo() {
       for (int number = 0; number < 256; number++) {
         for (int clock = 0; clock < 16; clock++) {
@@ -60,7 +64,11 @@ namespace jtag {
         }
       }
     }
-  }
 
+#ifdef __cplusplus
+}
+#endif
+
+  }
 }
 
