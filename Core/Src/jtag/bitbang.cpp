@@ -25,7 +25,7 @@ namespace jtag {
     __attribute__((optimize("-Ofast")))
     void shift(uint32_t number, const uint32_t len) {
       for (uint32_t i=0; i<len; i++) {
-        GPIOE->ODR = ((number & 1) << WHAT_SIGNAL);
+        *(volatile uint32_t *)(0x20000) = ((number & 1) << WHAT_SIGNAL);
         asm("nop");
         asm("nop");
         asm("nop");
@@ -33,7 +33,7 @@ namespace jtag {
         asm("nop");
         asm("nop");
         asm("nop");
-        GPIOE->ODR = ((number & 1) << WHAT_SIGNAL) | (1 << JTAG_TCK);
+        *(volatile uint32_t *)(0x20000) = ((number & 1) << WHAT_SIGNAL) | (1 << TCK);
         asm("nop");
         number = number >> 1;
       }
