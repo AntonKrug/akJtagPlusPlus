@@ -18,6 +18,7 @@ namespace jtag {
     const uint8_t JTAG_TDI = 4;
     const uint8_t JTAG_TDO = 5;
 
+      // TODO: Write this as inline assembly, just to guarantee the 50% duty cycle between the two writes
     template<uint8_t WHAT_SIGNAL>
     __attribute__((optimize("-Ofast")))
     void shift(uint32_t number, const uint32_t len) {
