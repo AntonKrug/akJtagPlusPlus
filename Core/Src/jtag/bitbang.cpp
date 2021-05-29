@@ -52,8 +52,9 @@ extern "C" {
 
     // Test demo
     void demo() {
-      for (int number = 0; number < 256; number++) {
-        shiftTms({8, 0b11111111});
+      for (int number = 0; number < jtag::tap::tapStateSize; number++) {
+        jtag::tap::stateMove(static_cast<jtag::tap::state_e>(number));
+//        shiftTms({8, 0b11111111});
 //        shift<TMS>(32, number);
       }
     }
