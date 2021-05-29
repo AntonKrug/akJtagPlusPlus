@@ -165,6 +165,7 @@ int main(void)
     if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)) {
       jtag_loop();
     }
+    HAL_Delay(100);
 
 //    static uint8_t buf[4] = {0};
 //    buf[1] = 7;
