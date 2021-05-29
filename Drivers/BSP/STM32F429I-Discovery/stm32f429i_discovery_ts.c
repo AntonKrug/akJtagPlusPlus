@@ -169,6 +169,9 @@ void BSP_TS_GetState(TS_StateTypeDef* TsState)
     /* Y value second correction */
     yr = y / 11;
     
+    // My touch screen is flip-ed
+    yr = TsYBoundary - yr;
+
     /* Return y position value */
     if(yr <= 0)
     {

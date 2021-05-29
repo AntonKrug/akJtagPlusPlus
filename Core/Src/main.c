@@ -159,6 +159,7 @@ int main(void)
     BSP_TS_GetState(&TS_State);
     if ((TS_State.TouchDetected) & ( TS_State.X > 0 ) & ( TS_State.X < 200 ))
     {
+      BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
       BSP_LCD_DrawCircle(TS_State.X, TS_State.Y, 5);
     }
 
