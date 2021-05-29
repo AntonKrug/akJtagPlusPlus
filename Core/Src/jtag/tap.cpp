@@ -18,6 +18,8 @@ namespace jtag {
 
 	namespace tap {
 
+	  tapState_e currentState = tapState_e::TestLogicReset;
+
 		tmsMove tapMoves [tapStateSize][tapStateSize] = {
 
 		    // Lookup table with how many TCK clocks and what TMS bits has to be shifted to move from one
@@ -48,42 +50,6 @@ namespace jtag {
 		    /* UpdateIR    */ {  {3, 0b111},   {1, 0b0},   {1, 0b1},    {2, 0b01},   {3, 0b001},   {3, 0b101},   {4, 0b0101},   {5, 0b10101},   {4, 0b1101},   {2, 0b11},   {3, 0b011},   {4, 0b0011},   {4, 0b1011},   {5, 0b01011},   {6, 0b101011},   {5, 0b11011}    }
 		};
 
-		struct display_entry_s {
-			const char*       name;
-			const uint32_t    color;
-			const uint16_t    x;
-			const uint16_t    y;
-		};
-
-		const uint16_t rowFirstX   = 5;
-		const uint16_t blockWidth  = 100;
-		const uint16_t rowSecondX  = 120;
-		const uint16_t lineSpacing = 14;
-		const uint16_t fontHeight  = 8;
-		const uint16_t lineHeight  = fontHeight + lineSpacing;
-
-		const display_entry_s displayEntries[] = {
-				{ "Test Logic Reset", LCD_COLOR_BROWN,      rowFirstX,  0 * lineHeight + lineSpacing },
-				{ "Run Test / Idle",  LCD_COLOR_BROWN,      rowFirstX,  1 * lineHeight + lineSpacing  },
-
-				{ "Select DR Scan",   LCD_COLOR_DARKBLUE,   rowFirstX,  3 * lineHeight },
-        { "Shift DR",         LCD_COLOR_DARKBLUE,   rowFirstX,  4 * lineHeight },
-        { "Exit 1 DR",        LCD_COLOR_DARKBLUE,   rowFirstX,  5 * lineHeight },
-        { "Pause DR",         LCD_COLOR_DARKBLUE,   rowFirstX,  6 * lineHeight },
-        { "Exit 2 DR",        LCD_COLOR_DARKBLUE,   rowFirstX,  7 * lineHeight },
-        { "Update DR",        LCD_COLOR_DARKBLUE,   rowFirstX,  8 * lineHeight },
-
-        { "Select IR Scan",   LCD_COLOR_DARKGREEN,  rowSecondX, 3 * lineHeight },
-        { "Shift IR",         LCD_COLOR_DARKGREEN,  rowSecondX, 4 * lineHeight },
-        { "Exit 1 IR",        LCD_COLOR_DARKGREEN,  rowSecondX, 5 * lineHeight },
-        { "Pause IR",         LCD_COLOR_DARKGREEN,  rowSecondX, 6 * lineHeight },
-        { "Exit 2 IR",        LCD_COLOR_DARKGREEN,  rowSecondX, 7 * lineHeight },
-        { "Update IR",        LCD_COLOR_DARKGREEN,  rowSecondX, 8 * lineHeight },
-		};
-
-		tapState_e currentState = tapState_e::TestLogicReset;
-
-
 		void reset() {
 		  jtag::bitbang::shiftTms({8, 0b11111111});
 
@@ -98,22 +64,61 @@ namespace jtag {
 		}
 
 
-		void display() {
-		  for (auto entry: displayEntries) {
-		    BSP_LCD_SetBackColor(entry.color);
+		namespace telemetry {
 
-        BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-        BSP_LCD_FillRect(entry.x -2, entry.y - 2, blockWidth + 4, fontHeight + 3);
+		  struct display_entry_s {
+        const char*       name;
+        const uint32_t    color;
+        const uint16_t    x;
+        const uint16_t    y;
+      };
 
-        BSP_LCD_SetTextColor(entry.color);
-        BSP_LCD_FillRect(entry.x -1, entry.y - 1, blockWidth + 2, fontHeight + 1);
 
-        BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-		    BSP_LCD_DisplayString(entry.x, entry.y, entry.name);
-		  }
+      const uint16_t rowFirstX   = 5;
+      const uint16_t blockWidth  = 100;
+      const uint16_t rowSecondX  = 120;
+      const uint16_t lineSpacing = 14;
+      const uint16_t fontHeight  = 8;
+      const uint16_t lineHeight  = fontHeight + lineSpacing;
+
+
+      const display_entry_s displayEntries[] = {
+          { "Test Logic Reset", LCD_COLOR_BROWN,      rowFirstX,  0 * lineHeight + lineSpacing },
+          { "Run Test / Idle",  LCD_COLOR_BROWN,      rowFirstX,  1 * lineHeight + lineSpacing  },
+
+          { "Select DR Scan",   LCD_COLOR_DARKBLUE,   rowFirstX,  3 * lineHeight },
+          { "Shift DR",         LCD_COLOR_DARKBLUE,   rowFirstX,  4 * lineHeight },
+          { "Exit 1 DR",        LCD_COLOR_DARKBLUE,   rowFirstX,  5 * lineHeight },
+          { "Pause DR",         LCD_COLOR_DARKBLUE,   rowFirstX,  6 * lineHeight },
+          { "Exit 2 DR",        LCD_COLOR_DARKBLUE,   rowFirstX,  7 * lineHeight },
+          { "Update DR",        LCD_COLOR_DARKBLUE,   rowFirstX,  8 * lineHeight },
+
+          { "Select IR Scan",   LCD_COLOR_DARKGREEN,  rowSecondX, 3 * lineHeight },
+          { "Shift IR",         LCD_COLOR_DARKGREEN,  rowSecondX, 4 * lineHeight },
+          { "Exit 1 IR",        LCD_COLOR_DARKGREEN,  rowSecondX, 5 * lineHeight },
+          { "Pause IR",         LCD_COLOR_DARKGREEN,  rowSecondX, 6 * lineHeight },
+          { "Exit 2 IR",        LCD_COLOR_DARKGREEN,  rowSecondX, 7 * lineHeight },
+          { "Update IR",        LCD_COLOR_DARKGREEN,  rowSecondX, 8 * lineHeight },
+      };
+
+
+      void display() {
+        for (auto entry: displayEntries) {
+          BSP_LCD_SetBackColor(entry.color);
+
+          BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+          BSP_LCD_FillRect(entry.x -2, entry.y - 2, blockWidth + 4, fontHeight + 3);
+
+          BSP_LCD_SetTextColor(entry.color);
+          BSP_LCD_FillRect(entry.x -1, entry.y - 1, blockWidth + 2, fontHeight + 1);
+
+          BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+          BSP_LCD_DisplayString(entry.x, entry.y, entry.name);
+        }
+      }
+
+
 		}
-
-
 	}
 }
 

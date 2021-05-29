@@ -12,7 +12,7 @@ extern "C" {
 #include "tap.hpp"
 
 void jtag_tap_display() {
-  jtag::tap::display();
+  jtag::tap::telemetry::display();
 }
 
 #ifdef __cplusplus

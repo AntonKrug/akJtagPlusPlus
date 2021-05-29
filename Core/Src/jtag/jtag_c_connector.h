@@ -13,10 +13,13 @@
 extern "C" {
 #endif
 
+
+void jtag_tap_telemetry_dispay(void);
+
 void jtag_setup(void);
 
-
 void jtag_loop(void);
+
 
 #ifdef __cplusplus
 }

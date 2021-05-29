@@ -48,7 +48,10 @@ namespace jtag {
       uint8_t valueToShift;
     };
 
-    void display(void);
+    namespace telemetry {
+      void display(void);
+    }
+
 
   }
 

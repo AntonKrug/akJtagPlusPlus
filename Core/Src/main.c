@@ -135,7 +135,7 @@ int main(void)
 
   BSP_LCD_SetFont(&Font8);
 
-  jtag_tap_display();
+  jtag_tap_telemetry_dispay();
 
 
   HAL_TIM_Base_Start_IT(&htim1);

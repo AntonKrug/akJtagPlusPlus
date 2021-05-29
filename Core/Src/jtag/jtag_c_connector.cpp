@@ -12,6 +12,12 @@ extern "C" {
 
 #include "jtag_c_connector.h"
 #include "bitbang.hpp"
+#include "tap.hpp"
+
+
+void jtag_tap_telemetry_dispay() {
+  jtag::tap::telemetry::display();
+}
 
 
 void jtag_setup() {
