@@ -19,6 +19,7 @@ namespace jtag {
 	namespace tap {
 
 		tmsMove tapMoves [tapStateSize][tapStateSize] = {
+
 		    // Lookup table with how many TCK clocks and what TMS bits has to be shifted to move from one
 		    // state to the other state inside the TAP state machine
 		    //
