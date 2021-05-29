@@ -154,22 +154,6 @@ typedef enum
 /*############################### I2Cx #######################################*/
 /* User can use this section to tailor I2Cx instance used and associated 
    resources */
-#define DISCOVERY_I2Cx_FORCE_RESET()            __HAL_RCC_I2C3_FORCE_RESET()
-#define DISCOVERY_I2Cx_RELEASE_RESET()          __HAL_RCC_I2C3_RELEASE_RESET()
-#define DISCOVERY_I2Cx_SDA_GPIO_CLK_DISABLE()   __HAL_RCC_GPIOC_CLK_DISABLE()
-
-/* Definition for IOE I2Cx's NVIC */
-#define DISCOVERY_I2Cx_EV_IRQn                  I2C3_EV_IRQn
-#define DISCOVERY_I2Cx_ER_IRQn                  I2C3_ER_IRQn
-
-/* I2C clock speed configuration (in Hz) 
-  WARNING: 
-   Make sure that this define is not already declared in other files.
-   It can be used in parallel by other modules. */
-#ifndef BSP_I2C_SPEED
- #define BSP_I2C_SPEED                          100000
-#endif /* BSP_I2C_SPEED */
-
 #define I2Cx_TIMEOUT_MAX                    0x3000 /*<! The value of the maximal timeout for I2C waiting loops */
 
 /*############################### SPIx #######################################*/

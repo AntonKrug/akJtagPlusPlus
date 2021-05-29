@@ -113,14 +113,12 @@ static uint8_t Is_LCD_IO_Initialized = 0;
   * @{
   */ 
 /* I2Cx bus function */
-static void               I2Cx_Init(void);
 static void               I2Cx_ITConfig(void);
 static void               I2Cx_WriteData(uint8_t Addr, uint8_t Reg, uint8_t Value);
 static void               I2Cx_WriteBuffer(uint8_t Addr, uint8_t Reg,  uint8_t *pBuffer, uint16_t Length);
 static uint8_t            I2Cx_ReadData(uint8_t Addr, uint8_t Reg);
 static uint8_t            I2Cx_ReadBuffer(uint8_t Addr, uint8_t Reg, uint8_t *pBuffer, uint16_t Length);
 static void               I2Cx_Error(void);
-static void               I2Cx_MspInit();
 
 /* SPIx bus function */
 static void               SPIx_Init(void);
@@ -282,28 +280,6 @@ uint32_t BSP_PB_GetState(Button_TypeDef Button)
 
 /******************************* I2C Routines *********************************/
 
-/**
-  * @brief  I2Cx MSP Initialization
-  * @param  hi2c: I2C handle
-  */
-static void I2Cx_MspInit()
-{
-
-  /* Force the I2C Peripheral Clock Reset */
-  DISCOVERY_I2Cx_FORCE_RESET();
-    
-  /* Release the I2C Peripheral Clock Reset */
-  DISCOVERY_I2Cx_RELEASE_RESET();
-
-}
-
-/**
-  * @brief  I2Cx Bus initialization.
-  */
-static void I2Cx_Init(void)
-{
-	I2Cx_MspInit();
-}
 
 /**
   * @brief  Configures Interruption pin for I2C communication.
@@ -489,7 +465,7 @@ static void I2Cx_Error(void)
   HAL_I2C_DeInit(&hi2c3);
   
   /* Re-Initialize the SPI communication BUS */
-  I2Cx_Init();
+  // TODO: Use the generated Init
 }
 
 /******************************* SPI Routines *********************************/
@@ -718,14 +694,6 @@ void LCD_Delay(uint32_t Delay)
 *******************************************************************************/
 
 /********************************* LINK IOE ***********************************/
-
-/**
-  * @brief  IOE Low Level Initialization.
-  */
-void IOE_Init(void) 
-{
-  I2Cx_Init();
-}
 
 /**
   * @brief  IOE Low Level Interrupt configuration.

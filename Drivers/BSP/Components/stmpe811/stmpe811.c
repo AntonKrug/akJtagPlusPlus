@@ -148,7 +148,7 @@ void stmpe811_Init(uint16_t DeviceAddr)
       stmpe811[empty] = DeviceAddr;
       
       /* Initialize IO BUS layer */
-      IOE_Init(); 
+//      IOE_Init();
       
       /* Generate stmpe811 Software reset */
       stmpe811_Reset(DeviceAddr);
@@ -184,7 +184,7 @@ void stmpe811_Reset(uint16_t DeviceAddr)
 uint16_t stmpe811_ReadID(uint16_t DeviceAddr)
 {
   /* Initialize IO BUS layer */
-  IOE_Init(); 
+//  IOE_Init();
   
   /* Return the device ID value */
   return ((IOE_Read(DeviceAddr, STMPE811_REG_CHP_ID_LSB) << 8) |\
