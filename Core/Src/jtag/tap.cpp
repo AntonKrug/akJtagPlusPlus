@@ -18,7 +18,7 @@ namespace jtag {
 
 	namespace tap {
 
-	  tapState_e currentState = tapState_e::TestLogicReset;
+	  state_e currentState = state_e::TestLogicReset;
 
 		tmsMove tapMoves [tapStateSize][tapStateSize] = {
 
@@ -53,11 +53,11 @@ namespace jtag {
 		void reset() {
 		  jtag::bitbang::shiftTms({8, 0b11111111});
 
-		  currentState = tapState_e::TestLogicReset;
+		  currentState = state_e::TestLogicReset;
 		}
 
 
-		void stateMove(tapState_e whereToMove) {
+		void stateMove(state_e whereToMove) {
 		  auto whatToShift = tapMoves[static_cast<int>(currentState)][static_cast<int>(whereToMove)];
 		  jtag::bitbang::shiftTms(whatToShift);
 		  currentState = whereToMove;
