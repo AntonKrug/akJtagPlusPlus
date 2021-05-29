@@ -15,17 +15,17 @@ namespace jtag {
 
   namespace bitbang {
 
-    const uint8_t JTAG_TCK = 2;
-    const uint8_t JTAG_TMS = 3;
-    const uint8_t JTAG_TDI = 4;
-    const uint8_t JTAG_TDO = 5;
+    const uint8_t TCK = 2;
+    const uint8_t TMS = 3;
+    const uint8_t TDI = 4;
+    const uint8_t TDO = 5;
 
       // TODO: Write this as inline assembly, just to guarantee the 50% duty cycle between the two writes
     template<uint8_t WHAT_SIGNAL>
     __attribute__((optimize("-Ofast")))
-    void shift(uint32_t number, const uint32_t len) {
+    void shift(const uint32_t len, uint32_t number) {
       for (uint32_t i=0; i<len; i++) {
-        *(volatile uint32_t *)(0x20000) = ((number & 1) << WHAT_SIGNAL);
+        GPIOE->ODR = ((number & 1) << WHAT_SIGNAL);
         asm("nop");
         asm("nop");
         asm("nop");
@@ -33,7 +33,7 @@ namespace jtag {
         asm("nop");
         asm("nop");
         asm("nop");
-        *(volatile uint32_t *)(0x20000) = ((number & 1) << WHAT_SIGNAL) | (1 << TCK);
+        GPIOE->ODR = ((number & 1) << WHAT_SIGNAL) | (1 << TCK);
         asm("nop");
         number = number >> 1;
       }
@@ -41,7 +41,7 @@ namespace jtag {
 
 
     void shiftTms(jtag::tap::tmsMove move) {
-      shift<JTAG_TMS>(move.amountOfBitsToShift, move.valueToShift);
+      shift<TMS>(move.amountOfBitsToShift, move.valueToShift);
     }
 
 
@@ -54,7 +54,7 @@ extern "C" {
     void demo() {
       for (int number = 0; number < 256; number++) {
         shiftTms({8, 0b11111111});
-//        shift<JTAG_TMS>(number, 32);
+//        shift<TMS>(32, number);
       }
     }
 
