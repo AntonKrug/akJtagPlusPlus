@@ -140,7 +140,7 @@ int main(void)
 
   jtag_setup();
 
-  BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+//  BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
 
   BSP_LCD_SetBackColor(LCD_COLOR_DARKMAGENTA);
   BSP_LCD_SetTextColor(LCD_COLOR_DARKMAGENTA);
@@ -155,12 +155,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    TS_StateTypeDef  TS_State;
-    BSP_TS_GetState(&TS_State);
-    if ((TS_State.TouchDetected) & (TS_State.X > 5) & (TS_State.Y > 200) & (TS_State.X < (5+200)) &  (TS_State.Y < (200+40)) )
-    {
-      jtag_loop();
-    }
+//    TS_StateTypeDef  TS_State;
+//    BSP_TS_GetState(&TS_State);
+//    if ((TS_State.TouchDetected) & (TS_State.X > 5) & (TS_State.Y > 200) & (TS_State.X < (5+200)) &  (TS_State.Y < (200+40)) )
+//    {
+//      jtag_loop();
+//    }
 
     if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)) {
       jtag_loop();
