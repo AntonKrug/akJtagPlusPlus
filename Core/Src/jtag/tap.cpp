@@ -19,10 +19,12 @@ namespace jtag {
 	namespace tap {
 
 		tmsMove tapMoves [tapStateSize][tapStateSize] = {
+
+		    //      End State => TLReset       RunTestIdle SelectDR     CaptureDR    ShiftDR       Exit1DR       PauseDR        Exit2DR         UpdateDR       SelectIR     CaptureIR     ShiftIR        Exit1IR        PauseIR         Exit2IR          UpdateIR
+		    //
 		    // Start state
 		    //  |
-		    //  |
-		    //  V   End State => TLReset       RunTestIdle SelectDR     CaptureDR    ShiftDR       Exit1DR       PauseDR        Exit2DR         UpdateDR       SelectIR     CaptureIR     ShiftIR        Exit1IR        PauseIR         Exit2IR          UpdateIR
+		    //  V
 		    /* TLReset     */ {  {1, 0b1},     {1, 0b0},   {2, 0b10},   {3, 0b010},  {4, 0b0010},  {4, 0b1010},  {5, 0b01010},  {6, 0b101010},  {5, 0b11010},  {3, 0b110},  {4, 0b0110},  {5, 0b00110},  {5, 0b10110},  {6, 0b010110},  {7, 0b1010110},  {6, 0b110110}   },
 		    /* RunTestIdle */ {  {3, 0b111},   {1, 0b0},   {1, 0b1},    {2, 0b01},   {3, 0b001},   {3, 0b101},   {4, 0b0101},   {5, 0b10101},   {4, 0b1101},   {2, 0b11},   {3, 0b011},   {4, 0b0011},   {4, 0b1011},   {5, 0b01011},   {6, 0b101011},   {5, 0b11011}    },
 		    /* SelectDR    */ {  {2, 0b11},    {3, 0b011}, {4, 0b1011}, {1, 0b0},    {2, 0b00},    {2, 0b10},    {3, 0b010},    {4, 0b1010},    {3, 0b110},    {1, 0b1},    {2, 0b01},    {3, 0b001},    {3, 0b101},    {4, 0b0101},    {5, 0b10101},    {4, 0b1101}     },
