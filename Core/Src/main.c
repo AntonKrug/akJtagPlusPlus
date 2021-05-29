@@ -141,6 +141,13 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim1);
 
   jtag_setup();
+
+  BSP_LCD_SetBackColor(LCD_COLOR_DARKMAGENTA);
+  BSP_LCD_SetTextColor(LCD_COLOR_DARKMAGENTA);
+  BSP_LCD_FillRect(5, 200, 100, 40);
+  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+  BSP_LCD_DisplayString(30, 220, "Scan ID");
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
