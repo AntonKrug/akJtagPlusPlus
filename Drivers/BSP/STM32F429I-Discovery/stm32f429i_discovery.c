@@ -288,110 +288,13 @@ uint32_t BSP_PB_GetState(Button_TypeDef Button)
   */
 static void I2Cx_MspInit()
 {
-  GPIO_InitTypeDef  GPIO_InitStruct;  
-#ifdef EE_M24LR64
-  static DMA_HandleTypeDef hdma_tx;
-  static DMA_HandleTypeDef hdma_rx;
-  
-  I2C_HandleTypeDef* pI2cHandle;
-  pI2cHandle = &I2cHandle;
-#endif /* EE_M24LR64 */
 
-    /* Configure the GPIOs ---------------------------------------------------*/ 
-    /* Enable GPIO clock */
-    DISCOVERY_I2Cx_SDA_GPIO_CLK_ENABLE();
-    DISCOVERY_I2Cx_SCL_GPIO_CLK_ENABLE();
-      
-    /* Configure I2C Tx as alternate function  */
-    GPIO_InitStruct.Pin       = DISCOVERY_I2Cx_SCL_PIN;
-    GPIO_InitStruct.Mode      = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull      = GPIO_NOPULL;
-    GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
-    GPIO_InitStruct.Alternate = DISCOVERY_I2Cx_SCL_SDA_AF;
-    HAL_GPIO_Init(DISCOVERY_I2Cx_SCL_GPIO_PORT, &GPIO_InitStruct);
-      
-    /* Configure I2C Rx as alternate function  */
-    GPIO_InitStruct.Pin = DISCOVERY_I2Cx_SDA_PIN;
-    HAL_GPIO_Init(DISCOVERY_I2Cx_SDA_GPIO_PORT, &GPIO_InitStruct);
+  /* Force the I2C Peripheral Clock Reset */
+  DISCOVERY_I2Cx_FORCE_RESET();
     
-    
-    /* Configure the Discovery I2Cx peripheral -------------------------------*/ 
-    /* Enable I2C3 clock */
-    DISCOVERY_I2Cx_CLOCK_ENABLE();
-    
-    /* Force the I2C Peripheral Clock Reset */  
-    DISCOVERY_I2Cx_FORCE_RESET();
-      
-    /* Release the I2C Peripheral Clock Reset */  
-    DISCOVERY_I2Cx_RELEASE_RESET(); 
-    
-    /* Enable and set Discovery I2Cx Interrupt to the lowest priority */
-    HAL_NVIC_SetPriority(DISCOVERY_I2Cx_EV_IRQn, 0x0F, 0);
-    HAL_NVIC_EnableIRQ(DISCOVERY_I2Cx_EV_IRQn);
-    
-    /* Enable and set Discovery I2Cx Interrupt to the lowest priority */
-    HAL_NVIC_SetPriority(DISCOVERY_I2Cx_ER_IRQn, 0x0F, 0);
-    HAL_NVIC_EnableIRQ(DISCOVERY_I2Cx_ER_IRQn);  
+  /* Release the I2C Peripheral Clock Reset */
+  DISCOVERY_I2Cx_RELEASE_RESET();
 
-#ifdef EE_M24LR64
-    /* I2C DMA TX and RX channels configuration */
-    /* Enable the DMA clock */
-    EEPROM_I2C_DMA_CLK_ENABLE();
-    
-    /* Configure the DMA stream for the EE I2C peripheral TX direction */
-    /* Configure the DMA Stream */
-    hdma_tx.Instance                  = EEPROM_I2C_DMA_STREAM_TX;
-    /* Set the parameters to be configured */
-    hdma_tx.Init.Channel              = EEPROM_I2C_DMA_CHANNEL;  
-    hdma_tx.Init.Direction            = DMA_MEMORY_TO_PERIPH;
-    hdma_tx.Init.PeriphInc            = DMA_PINC_DISABLE;
-    hdma_tx.Init.MemInc               = DMA_MINC_ENABLE;
-    hdma_tx.Init.PeriphDataAlignment  = DMA_PDATAALIGN_BYTE;
-    hdma_tx.Init.MemDataAlignment     = DMA_MDATAALIGN_BYTE;
-    hdma_tx.Init.Mode                 = DMA_NORMAL;
-    hdma_tx.Init.Priority             = DMA_PRIORITY_VERY_HIGH;
-    hdma_tx.Init.FIFOMode             = DMA_FIFOMODE_ENABLE;         
-    hdma_tx.Init.FIFOThreshold        = DMA_FIFO_THRESHOLD_FULL;
-    hdma_tx.Init.MemBurst             = DMA_MBURST_SINGLE;
-    hdma_tx.Init.PeriphBurst          = DMA_PBURST_SINGLE; 
-
-    /* Associate the initilalized hdma_tx handle to the the pI2cHandle handle */
-    __HAL_LINKDMA(pI2cHandle, hdmatx, hdma_tx);
-    
-    /* Configure the DMA Stream */
-    HAL_DMA_Init(&hdma_tx);
-    
-    /* Configure and enable I2C DMA TX Channel interrupt */
-    HAL_NVIC_SetPriority((IRQn_Type)(EEPROM_I2C_DMA_TX_IRQn), EEPROM_I2C_DMA_PREPRIO, 0);
-    HAL_NVIC_EnableIRQ((IRQn_Type)(EEPROM_I2C_DMA_TX_IRQn));
-    
-    /* Configure the DMA stream for the EE I2C peripheral TX direction */
-    /* Configure the DMA Stream */
-    hdma_rx.Instance                  = EEPROM_I2C_DMA_STREAM_RX;
-    /* Set the parameters to be configured */
-    hdma_rx.Init.Channel              = EEPROM_I2C_DMA_CHANNEL;  
-    hdma_rx.Init.Direction            = DMA_PERIPH_TO_MEMORY;
-    hdma_rx.Init.PeriphInc            = DMA_PINC_DISABLE;
-    hdma_rx.Init.MemInc               = DMA_MINC_ENABLE;
-    hdma_rx.Init.PeriphDataAlignment  = DMA_PDATAALIGN_BYTE;
-    hdma_rx.Init.MemDataAlignment     = DMA_MDATAALIGN_BYTE;
-    hdma_rx.Init.Mode                 = DMA_NORMAL;
-    hdma_rx.Init.Priority             = DMA_PRIORITY_VERY_HIGH;
-    hdma_rx.Init.FIFOMode             = DMA_FIFOMODE_ENABLE;         
-    hdma_rx.Init.FIFOThreshold        = DMA_FIFO_THRESHOLD_FULL;
-    hdma_rx.Init.MemBurst             = DMA_MBURST_SINGLE;
-    hdma_rx.Init.PeriphBurst          = DMA_PBURST_SINGLE; 
-
-    /* Associate the initilalized hdma_rx handle to the the pI2cHandle handle*/
-    __HAL_LINKDMA(pI2cHandle, hdmarx, hdma_rx);
-    
-    /* Configure the DMA Stream */
-    HAL_DMA_Init(&hdma_rx);
-    
-    /* Configure and enable I2C DMA RX Channel interrupt */
-    HAL_NVIC_SetPriority((IRQn_Type)(EEPROM_I2C_DMA_RX_IRQn), EEPROM_I2C_DMA_PREPRIO, 0);
-    HAL_NVIC_EnableIRQ((IRQn_Type)(EEPROM_I2C_DMA_RX_IRQn));
-#endif /* EE_M24LR64 */
 }
 
 /**

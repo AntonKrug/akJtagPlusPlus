@@ -136,10 +136,11 @@ int main(void)
 
   jtag_tap_telemetry_dispay();
 
-
   HAL_TIM_Base_Start_IT(&htim1);
 
   jtag_setup();
+
+  BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
 
   BSP_LCD_SetBackColor(LCD_COLOR_DARKMAGENTA);
   BSP_LCD_SetTextColor(LCD_COLOR_DARKMAGENTA);
@@ -147,12 +148,20 @@ int main(void)
   BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
   BSP_LCD_DisplayString(30, 220, "Scan ID");
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    static TS_StateTypeDef  TS_State;
+    BSP_TS_GetState(&TS_State);
+    if ((TS_State.TouchDetected) & ( TS_State.X > 0 ) & ( TS_State.X < 200 ))
+    {
+      BSP_LCD_DrawCircle(TS_State.X, TS_State.Y, 5);
+    }
+
     // JTAG pin 2
     if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)) {
       jtag_loop();
@@ -290,7 +299,7 @@ static void MX_I2C3_Init(void)
   }
   /** Configure Analogue filter
   */
-  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c3, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c3, I2C_ANALOGFILTER_DISABLE) != HAL_OK)
   {
     Error_Handler();
   }

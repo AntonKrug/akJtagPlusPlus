@@ -154,20 +154,9 @@ typedef enum
 /*############################### I2Cx #######################################*/
 /* User can use this section to tailor I2Cx instance used and associated 
    resources */
-#define DISCOVERY_I2Cx                          I2C3
-#define DISCOVERY_I2Cx_CLOCK_ENABLE()           __HAL_RCC_I2C3_CLK_ENABLE()
 #define DISCOVERY_I2Cx_FORCE_RESET()            __HAL_RCC_I2C3_FORCE_RESET()
 #define DISCOVERY_I2Cx_RELEASE_RESET()          __HAL_RCC_I2C3_RELEASE_RESET()
-#define DISCOVERY_I2Cx_SDA_GPIO_CLK_ENABLE()    __HAL_RCC_GPIOC_CLK_ENABLE()
-#define DISCOVERY_I2Cx_SCL_GPIO_CLK_ENABLE()    __HAL_RCC_GPIOA_CLK_ENABLE() 
 #define DISCOVERY_I2Cx_SDA_GPIO_CLK_DISABLE()   __HAL_RCC_GPIOC_CLK_DISABLE()
-
-/* Definition for DISCO I2Cx Pins */
-#define DISCOVERY_I2Cx_SCL_PIN                  GPIO_PIN_8
-#define DISCOVERY_I2Cx_SCL_GPIO_PORT            GPIOA
-#define DISCOVERY_I2Cx_SCL_SDA_AF               GPIO_AF4_I2C3
-#define DISCOVERY_I2Cx_SDA_PIN                  GPIO_PIN_9
-#define DISCOVERY_I2Cx_SDA_GPIO_PORT            GPIOC
 
 /* Definition for IOE I2Cx's NVIC */
 #define DISCOVERY_I2Cx_EV_IRQn                  I2C3_EV_IRQn

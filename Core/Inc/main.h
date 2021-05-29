@@ -39,6 +39,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+extern I2C_HandleTypeDef hi2c3;
 extern SPI_HandleTypeDef hspi5;
 extern I2C_HandleTypeDef hi2c3;
 extern LTDC_HandleTypeDef hltdc;
@@ -182,6 +183,10 @@ void Error_Handler(void);
 #define HSYNC_GPIO_Port GPIOC
 #define G6_Pin GPIO_PIN_7
 #define G6_GPIO_Port GPIOC
+#define DISCOVERY_I2Cx_SDA_Pin GPIO_PIN_9
+#define DISCOVERY_I2Cx_SDA_GPIO_Port GPIOC
+#define DISCOVERY_I2Cx_SCL_Pin GPIO_PIN_8
+#define DISCOVERY_I2Cx_SCL_GPIO_Port GPIOA
 #define STLINK_RX_Pin GPIO_PIN_9
 #define STLINK_RX_GPIO_Port GPIOA
 #define STLINK_TX_Pin GPIO_PIN_10
