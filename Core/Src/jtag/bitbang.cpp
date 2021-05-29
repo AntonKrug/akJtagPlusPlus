@@ -9,8 +9,10 @@
 #include <array>
 
 #include "stm32f429xx.h"
+#include "bitbang.hpp"
 
 namespace jtag {
+
   namespace bitbang {
 
     const uint8_t JTAG_TCK = 2;
@@ -38,6 +40,11 @@ namespace jtag {
     }
 
 
+    void shiftTms(jtag::tap::tmsMove move) {
+      shift<JTAG_TMS>(move.amountOfBitsToShift, move.valueToShift);
+    }
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,7 +53,8 @@ extern "C" {
     // Test demo
     void demo() {
       for (int number = 0; number < 256; number++) {
-        shift<JTAG_TDI>(number, 32);
+        shiftTms({8, 0b11111111});
+//        shift<JTAG_TMS>(number, 32);
       }
     }
 

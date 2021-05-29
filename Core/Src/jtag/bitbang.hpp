@@ -12,9 +12,12 @@
 extern "C" {
 #endif
 
+#include "tap.hpp"
 
 namespace jtag {
   namespace bitbang {
+
+    void shiftTms(jtag::tap::tmsMove move);
 
     void demo(void);
 
