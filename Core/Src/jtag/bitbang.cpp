@@ -53,11 +53,14 @@ extern "C" {
     // Test demo
     void demo() {
       jtag::tap::reset();
-      for (int number = 0; number < jtag::tap::tapStateSize; number++) {
-        jtag::tap::stateMove(static_cast<jtag::tap::state_e>(number));
-//        shiftTms({8, 0b11111111});
-//        shift<TMS>(32, number);
-      }
+//      for (int number = 0; number < jtag::tap::tapStateSize; number++) {
+//        jtag::tap::stateMove(static_cast<jtag::tap::state_e>(number));
+////        shiftTms({8, 0b11111111});
+////        shift<TMS>(32, number);
+//      }
+
+      jtag::tap::stateMove(jtag::tap::state_e::RunTestIdle);
+      jtag::tap::stateMove(jtag::tap::state_e::UpdateIr);
     }
 
 #ifdef __cplusplus
