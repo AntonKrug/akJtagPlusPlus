@@ -148,8 +148,9 @@ int main(void)
   while (1)
   {
     // JTAG pin 2
-
-    jtag_loop();
+    if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)) {
+      jtag_loop();
+    }
 
 //    static uint8_t buf[4] = {0};
 //    buf[1] = 7;
