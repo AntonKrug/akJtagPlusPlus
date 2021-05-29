@@ -55,10 +55,27 @@ namespace jtag {
 extern "C" {
 #endif
 
+    __attribute__((optimize("-Ofast")))
+    void shiftGeneric(uint32_t number, const uint32_t len) {
+      for (uint32_t i=0; i<len; i++) {
+        GPIOE->ODR = ((number & 1) << JTAG_TDI);
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        GPIOE->ODR = ((number & 1) << JTAG_TDI) | (1 << JTAG_TCK);
+        asm("nop");
+        number = number >> 1;
+      }
+    }
+
     // Test demo
     void demo() {
       for (int number = 0; number < 256; number++) {
-        shiftFunctions[number]();
+        shiftGeneric(number, 8);
       }
     }
 
