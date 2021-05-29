@@ -19,7 +19,11 @@ namespace jtag {
 	namespace tap {
 
 		tmsMove tapMoves [tapStateSize][tapStateSize] = {
-
+		    // Lookup table with how many TCK clocks and what TMS bits has to be shifted to move from one
+		    // state to the other state inside the TAP state machine
+		    //
+		    // https://www.allaboutcircuits.com/uploads/articles/jtag-part-ii-the-test-access-port-state-machine-SG-aac-image1.jpg
+		    //
 		    //      End State => TLReset       RunTestIdle SelectDR     CaptureDR    ShiftDR       Exit1DR       PauseDR        Exit2DR         UpdateDR       SelectIR     CaptureIR     ShiftIR        Exit1IR        PauseIR         Exit2IR          UpdateIR
 		    //
 		    // Start state
