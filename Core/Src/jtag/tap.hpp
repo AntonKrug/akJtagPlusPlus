@@ -43,6 +43,8 @@ namespace jtag {
 
     const int tapStateSize = static_cast<int>(state_e::LAST_ENUM);
 
+    extern state_e currentState;
+
     struct tmsMove {
       uint8_t amountOfBitsToShift;
       uint8_t valueToShift;
