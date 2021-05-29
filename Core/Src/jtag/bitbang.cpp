@@ -18,11 +18,11 @@ namespace jtag {
     const uint8_t JTAG_TDI = 4;
     const uint8_t JTAG_TDO = 5;
 
-    template<uint8_t whatSignal>
-    __attribute__((optimize("-Ofast"), always_inline))
-    inline void shiftGeneric(uint32_t number, const uint32_t len) {
+    template<uint8_t WHAT_SIGNAL>
+    __attribute__((optimize("-Ofast")))
+    void shift(uint32_t number, const uint32_t len) {
       for (uint32_t i=0; i<len; i++) {
-        GPIOE->ODR = ((number & 1) << whatSignal);
+        GPIOE->ODR = ((number & 1) << WHAT_SIGNAL);
         asm("nop");
         asm("nop");
         asm("nop");
@@ -30,15 +30,10 @@ namespace jtag {
         asm("nop");
         asm("nop");
         asm("nop");
-        GPIOE->ODR = ((number & 1) << whatSignal) | (1 << JTAG_TCK);
+        GPIOE->ODR = ((number & 1) << WHAT_SIGNAL) | (1 << JTAG_TCK);
         asm("nop");
         number = number >> 1;
       }
-    }
-
-    __attribute__((optimize("-Ofast"), always_inline))
-    inline void shiftTdi(uint32_t number, const uint32_t len) {
-      shiftGeneric<JTAG_TDI>(number, len);
     }
 
 
@@ -50,8 +45,7 @@ extern "C" {
     // Test demo
     void demo() {
       for (int number = 0; number < 256; number++) {
-        shiftGeneric<JTAG_TDI>(number, 32);
-//        shiftTdi(number, 32);
+        shift<JTAG_TDI>(number, 32);
       }
     }
 
