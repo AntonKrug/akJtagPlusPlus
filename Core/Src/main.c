@@ -23,7 +23,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "tap_c_connector.h"
 #include "jtag_c_connector.h"
 #include "usbd_hid.h"
 
