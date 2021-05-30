@@ -54,7 +54,7 @@ namespace jtag {
         // Low part of the TCK
         "and.w %[shift_out],   %[write_value],    #1               \n\t"  // shift_out = write_value & 1
         "lsls  %[shift_out],   %[shift_out],      %[write_shift]   \n\t"  // shift_out = shift_out << write_shift
-        "and.w %[shift_out],   %[shift_out],      %[reset_value]   \n\t"  // shift_out = shift_out | (nRSTvlaue << nRST)
+        "orr.w %[shift_out],   %[shift_out],      %[reset_value]   \n\t"  // shift_out = shift_out | (nRSTvlaue << nRST)
         "str   %[shift_out],   [%[gpio_out_addr]]                  \n\t"  // GPIO = shift_out
 
         // On first cycle this is redundant, as it processed the shift_in from the previous iteration
