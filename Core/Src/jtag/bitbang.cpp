@@ -63,8 +63,8 @@ namespace jtag {
         "repeatForEachBit%=:                                   \n\t"
 
         // Low part of the TCK
-        "lsl %[value_shifted], %[write_value],   %[pin_shift]  \n\t"  // value_shifted = value_shifted << pin_shift
-        "and %[value_shifted], %[value_shifted], %[pin_mask]   \n\t"  // value_shifted = value_shifted & pin_mask
+        "and %[value_shifted], %[write_value],   #1            \n\t"  // value_shifted = value_shifted & pin_mask
+        "lsl %[value_shifted], %[value_shifted], %[pin_shift]  \n\t"  // value_shifted = value_shifted << pin_shift
         "str %[value_shifted], [%[gpio_out_addr]]              \n\t"  // GPIO = value_shifted
         "nop                                                   \n\t"
         "nop                                                   \n\t"
@@ -93,7 +93,6 @@ namespace jtag {
           [lenght]          "r"(lenght),
           [write_value]     "r"(write_value),
           [pin_shift]       "M"(WHAT_SIGNAL),
-          [pin_mask]        "I"(powerOfTwo(WHAT_SIGNAL)),
           [clock_mask]      "I"(powerOfTwo(TCK))
 
         // Clobbers
