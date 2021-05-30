@@ -124,7 +124,7 @@ namespace jtag {
     }
 
 
-    void resetTarget(uint8_t length) {
+    void resetTargetHold(uint8_t length) {
       // length has to be under 32
       shiftAsm8<RST>(length, 0xffff'ffff);
     }
@@ -135,6 +135,11 @@ namespace jtag {
       shiftAsm8<RST>(length, 0x0000'0000);
     }
 
+    void resetTarget(uint8_t lengthHold, uint8_t lengthRelease) {
+      // lengths have to be under 32
+      resetTargetHold(32);
+      resetTargetRelease(32);
+    }
 
   }
 }
