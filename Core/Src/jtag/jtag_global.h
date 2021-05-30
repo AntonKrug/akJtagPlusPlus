@@ -14,7 +14,7 @@
 
 #define JTAG_TAP_TELEMETRY // Comment-out to disable the TAP state machine telemetry
 
-#define JTAG_SHIFT_TIMMING // Comment-out to disable the bitbang shifting time LED output (can be used on the scope to count time spent bit-banging)
+//#define JTAG_SHIFT_TIMMING // Comment-out to disable the bitbang shifting time LED output (can be used on the scope to count time spent bit-banging)
 #ifdef JTAG_SHIFT_TIMMING
 #define JTAG_SHIFT_TIMMING_PORT LD3_GPIO_Port
 #define JTAG_SHIFT_TIMMING_PIN  LD3_Pin
