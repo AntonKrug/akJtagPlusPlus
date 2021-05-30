@@ -20,7 +20,6 @@ namespace jtag {
     const uint8_t TDI = 4;
     const uint8_t TDO = 5;
 
-      // TODO: Write this as inline assembly, just to guarantee the 50% duty cycle between the two writes
     template<uint8_t WHAT_SIGNAL>
     __attribute__((optimize("-Ofast")))
     void shift(const uint32_t len, uint32_t number) {
@@ -40,56 +39,71 @@ namespace jtag {
     }
 
 
+    constexpr uint8_t powerOfTwo(uint8_t number) {
+        int ret = 1;
+        for (int i=0; i<number; i++) {
+            ret *= 2;
+        }
+        return ret;
+    }
+
     // GPIOE_BASE + 0x14
     // AHB1PERIPH_BASE + 0x1000UL + 0x14
     // PERIPH_BASE + 0x00020000UL + 0x1000UL + 0x14 => 0x21014
     //
-    void shiftAsm(const uint32_t lenght, uint32_t value) {
+    template<uint8_t WHAT_SIGNAL>
+    __attribute__((optimize("-Ofast")))
+    void shiftAsm(const uint32_t lenght, uint32_t write_value) {
+      volatile uint32_t addressWrite = GPIOE->ODR;
+      uint32_t count        = 0;
       uint32_t read_value;
-      asm (
-//          "mov %[count], #0 \n\t"
-//          "mov %[read_value], #10              \n\t"
-          "mov %[read_value], 10   \n\t"
-          "mov ip, #0 \n\t"
-          "add ip, %[gpio_out_addr_high]   \n\t"
-          "lsl ip, ip, #8 \n\t"
-          "add ip, %[gpio_out_addr_mid]   \n\t"
-          "lsl ip, ip, #8 \n\t"
-          "add ip, %[gpio_out_addr_low]   \n\t"
-          "LSL %[read_value], %[read_value], %[pin_shift]"
-//          "mov ip,            %[gpio_out_addr] \n\t"
-          : [read_value]        "=r"(read_value)
-          : [gpio_out_addr_low]  "I"((0x21014) & 0xff),
-            [gpio_out_addr_mid]  "I"((0x21014) & 0xff00 >> 8),
-            [gpio_out_addr_high] "I"((0x21014) & 0xff0000 >> 16),
-            [pin_shift]          "M"(2)
+      uint32_t value_shifted;
+      asm volatile (
+        //   "mov %[read_value],  10                             \n\t"
+        "repeatForEachBit%=:                                   \n\t"
+
+        // Low part of the TCK
+        "lsl %[value_shifted], %[write_value],   %[pin_shift]  \n\t"  // value_shifted = value_shifted << pin_shift
+        "and %[value_shifted], %[value_shifted], %[pin_mask]   \n\t"  // value_shifted = value_shifted & pin_mask
+        "str %[value_shifted], [%[gpio_out_addr]]              \n\t"  // GPIO = value_shifted
+        "nop                                                   \n\t"
+        "nop                                                   \n\t"
+        "nop                                                   \n\t"
+        "nop                                                   \n\t"
+        "nop                                                   \n\t"
+        "nop                                                   \n\t"
+        "nop                                                   \n\t"
+
+        // High part of the TCK
+        "orr %[value_shifted], %[value_shifted], %[clock_mask] \n\t"  // value_shifted = value_shifted | TCK
+        "str %[value_shifted], [%[gpio_out_addr]]              \n\t"  // GPIO = value_shifted
+        "nop                                                   \n\t"
+        "lsr %[write_value],   %[write_value],   #1            \n\t"  // write_value = write_value >> 1
+        "add %[count],         %[count],         #1            \n\t"  // count++
+        "cmp %[count],         %[lenght]                       \n\t"  // if (count != lenght) then
+        "bne repeatForEachBit%=                                \n\t"  //   repeatForEachBit
+
+        // Outputs
+        : [read_value]      "=r"(read_value),
+          [count]           "+r"(count),
+          [value_shifted]   "=r"(value_shifted)
+
+        // Inputs
+        : [gpio_out_addr]   "r"(addressWrite),
+          [lenght]          "r"(lenght),
+          [write_value]     "r"(write_value),
+          [pin_shift]       "M"(WHAT_SIGNAL),
+          [pin_mask]        "I"(powerOfTwo(WHAT_SIGNAL)),
+          [clock_mask]      "I"(powerOfTwo(TCK))
+
+        // Clobbers
+        : "memory"
       );
-//        "sample%=:                  \n\t"
-//        "in %[reg0],   %[addr]      \n\t"
-//        "in %[reg1],   %[addr]      \n\t"
-//        "in %[reg2],   %[addr]      \n\t"
-//        "in %[reg3],   %[addr]      \n\t"
-//        "inc %[major]               \n\t" // Increment the major counter
-//        "in %[reg4],   %[addr]      \n\t"
-//        "in %[reg5],   %[addr]      \n\t"
-//        "in %[reg6],   %[addr]      \n\t"
-//        "in %[reg7],   %[addr]      \n\t"
-//        "cpi %[major], %[major_max] \n\t" // Compare major counter with SINGLE_PIN_CAPACITIVE_SENSE_TIMEOUT
-//        "in %[reg8],   %[addr]      \n\t"
-//        "in %[reg9],   %[addr]      \n\t"
-//        "in %[reg10],  %[addr]      \n\t"
-//        "in %[reg11],  %[addr]      \n\t"
-//        "breq timeout%=             \n\t" // Branch if equal (major == SINGLE_PIN_CAPACITIVE_SENSE_TIMEOUT)
-//        "in %[reg12],  %[addr]      \n\t"
-//        "in %[reg13],  %[addr]      \n\t"
-//        "in %[reg14],  %[addr]      \n\t"
-//        "sbis %[addr], %[bit]       \n\t" // Skip if bit in I/O is set, no need to read the sample into a register
-//        "rjmp sample%=              \n\t"
-//      );
     }
 
+
     void shiftTms(jtag::tap::tmsMove move) {
-      shift<TMS>(move.amountOfBitsToShift, move.valueToShift);
+      shiftAsm<TMS>(move.amountOfBitsToShift, move.valueToShift);
     }
 
 
