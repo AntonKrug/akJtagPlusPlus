@@ -60,8 +60,9 @@ namespace jtag {
       volatile uint32_t addressWrite = GPIOE_BASE + 0x14; // ODR register of GPIO port E
       volatile uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
 
-      uint32_t count = 0;
-      uint32_t value_shifted = 0;
+      uint32_t count     = 0;
+      uint32_t shift_out = 0;
+      uint32_t shift_in  = 0;
       uint32_t ret_value = 0;
 
       asm volatile (
@@ -70,38 +71,38 @@ namespace jtag {
         "repeatForEachBit%=:                                       \n\t"
 
         // Low part of the TCK
-        "and.w %[value_shifted], %[write_value],    #1             \n\t"  // value_shifted = write_value & 1
-        "lsls  %[value_shifted], %[value_shifted],  %[write_shift] \n\t"  // value_shifted = value_shifted << pin_shift
-        "str   %[value_shifted], [%[gpio_out_addr]]                \n\t"  // GPIO = value_shifted
-        "nop                                                       \n\t"
-        "nop                                                       \n\t"
-        "nop                                                       \n\t"
-        "nop                                                       \n\t"
-        "nop                                                       \n\t"
-        "nop                                                       \n\t"
-          "nop                                                       \n\t"
-          "nop                                                       \n\t"
-        "orr.w %[value_shifted], %[value_shifted],  %[clock_mask]  \n\t"  // value_shifted = value_shifted | TCK
-        "lsr   %[write_value],   %[write_value],    #1             \n\t"  // write_value = write_value >> 1
-        "adds  %[count],         #1                                \n\t"  // count++
-        "cmp   %[count],         %[lenght]                         \n\t"  // if (count != lenght) then ....
+        "and.w %[shift_out],   %[write_value],    #1               \n\t"  // shift_out = write_value & 1
+        "lsls  %[shift_out],   %[shift_out],      %[write_shift]   \n\t"  // shift_out = shift_out << pin_shift
+        "str   %[shift_out],   [%[gpio_out_addr]]                  \n\t"  // GPIO = shift_out
+        "nop \n\t"
+        "nop \n\t"
+
+        // On first cycle this is redundant, as it processed the shift_in from the previous iteration
+        "and.w %[shift_in],    %[shift_in],       #1              \n\t"  // shift_in = shift_in & 1
+        "lsl   %[ret_value],   #1                                 \n\t"  // ret = ret << 1
+        "orr.w %[ret_value],   %[ret_value],      %[shift_in]     \n\t"  // ret = ret | shift_in
+
+        // Prepare things which are needed torward end of the loop, but can be done now
+        "orr.w %[shift_out],   %[shift_out],      %[clock_mask]    \n\t"  // shift_out = shift_out | TCK
+        "lsr   %[write_value], %[write_value],    #1               \n\t"  // write_value = write_value >> 1
+        "adds  %[count],       #1                                  \n\t"  // count++
+        "cmp   %[count],       %[lenght]                           \n\t"  // if (count != lenght) then ....
 
 
         // High part of the TCK
-        "str   %[value_shifted], [%[gpio_out_addr]]                \n\t"  // GPIO = value_shifted
-        "ldr   %[value_shifted], [%[gpio_in_addr]]                 \n\t"  // value_shifted = GPIO
-        "lsr   %[value_shifted], %[value_shifted], %[read_shift]   \n\t"  // value_shifted = value_shifted >> TDI
-        "and.w %[value_shifted], %[value_shifted], #1              \n\t"  // value_shifted = value_shifted & 1
-        "lsl   %[ret_value],     #1                                \n\t"  // ret = ret << 1
-        "orr.w %[ret_value],     %[ret_value], %[value_shifted]    \n\t"  // ret = ret | value_shifted
-        "bne.n repeatForEachBit%=                                  \n\t"  // if (count != lenght) then  repeatForEachBit
+        "str   %[shift_out],   [%[gpio_out_addr]]                 \n\t"  // GPIO = shift_out
+        "ldr   %[shift_in],    [%[gpio_in_addr]]                  \n\t"  // shift_in = GPIO
+        "lsr   %[shift_in],    %[shift_in],       %[read_shift]   \n\t"  // shift_in = shift_in >> TDI
+        "bne.n repeatForEachBit%=                                 \n\t"  // if (count != lenght) then  repeatForEachBit
 
-        "cpsie if                                                  \n\t"  // Enable IRQ
+
+        "cpsie if                                                 \n\t"  // Enable IRQ
 
         // Outputs
         : [ret_value]       "+r"(ret_value),
           [count]           "+r"(count),
-          [value_shifted]   "+r"(value_shifted)
+          [shift_out]       "+r"(shift_out),
+          [shift_in]        "+r"(shift_in)
 
         // Inputs
         : [gpio_out_addr]   "r"(addressWrite),
@@ -122,7 +123,7 @@ namespace jtag {
 
     void shiftTms(jtag::tap::tmsMove move) {
       shiftAsm<TMS>(move.amountOfBitsToShift, move.valueToShift);
-      shift<TMS>(move.amountOfBitsToShift, move.valueToShift);
+//      shift<TMS>(move.amountOfBitsToShift, move.valueToShift);
     }
 
 
