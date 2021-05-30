@@ -47,14 +47,14 @@ namespace jtag {
         return ret;
     }
 
-    // GPIOE_BASE + 0x14
+    // GPIOE->ODR => GPIOE_BASE + 0x14
     // AHB1PERIPH_BASE + 0x1000UL + 0x14
     // PERIPH_BASE + 0x00020000UL + 0x1000UL + 0x14 => 0x21014
     //
     template<uint8_t WHAT_SIGNAL>
     __attribute__((optimize("-Ofast")))
     void shiftAsm(const uint32_t lenght, uint32_t write_value) {
-      volatile uint32_t addressWrite = GPIOE->ODR;
+      volatile uint32_t addressWrite = GPIOE_BASE + 0x14;
       uint32_t count        = 0;
       uint32_t read_value;
       uint32_t value_shifted;
