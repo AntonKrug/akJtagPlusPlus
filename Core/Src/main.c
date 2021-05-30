@@ -588,11 +588,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(JTAG_TDO_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : JTAG_VCC_SENSE_Pin */
-  GPIO_InitStruct.Pin = JTAG_VCC_SENSE_Pin;
+  /*Configure GPIO pin : JTAG_VJTAG_Pin */
+  GPIO_InitStruct.Pin = JTAG_VJTAG_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(JTAG_VCC_SENSE_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(JTAG_VJTAG_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : CSX_Pin */
   GPIO_InitStruct.Pin = CSX_Pin;
