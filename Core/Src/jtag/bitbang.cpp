@@ -48,13 +48,13 @@ namespace jtag {
     }
 
     // GPIOE->ODR => GPIOE_BASE + 0x14
-    // AHB1PERIPH_BASE + 0x1000UL + 0x14
-    // PERIPH_BASE + 0x00020000UL + 0x1000UL + 0x14 => 0x21014
-    //
+    // GPIOE->ODR => AHB1PERIPH_BASE + 0x1000UL + 0x14
+    // GPIOE->ODR => PERIPH_BASE + 0x00020000UL + 0x1000UL + 0x14
+    // GPIOE->ODR => 0x40000000 + 0x00020000UL + 0x1000UL + 0x14 => 0x40021014
     template<uint8_t WHAT_SIGNAL>
     __attribute__((optimize("-Ofast")))
     void shiftAsm(const uint32_t lenght, uint32_t write_value) {
-      volatile uint32_t addressWrite = GPIOE_BASE + 0x14;
+      volatile uint32_t addressWrite = GPIOE_BASE + 0x14; // Is the ODR register
       uint32_t count        = 0;
       uint32_t read_value;
       uint32_t value_shifted;
@@ -66,6 +66,7 @@ namespace jtag {
         "and %[value_shifted], %[write_value],   #1            \n\t"  // value_shifted = value_shifted & pin_mask
         "lsl %[value_shifted], %[value_shifted], %[pin_shift]  \n\t"  // value_shifted = value_shifted << pin_shift
         "str %[value_shifted], [%[gpio_out_addr]]              \n\t"  // GPIO = value_shifted
+        "nop                                                   \n\t"
         "nop                                                   \n\t"
         "nop                                                   \n\t"
         "nop                                                   \n\t"
@@ -86,7 +87,7 @@ namespace jtag {
         // Outputs
         : [read_value]      "=r"(read_value),
           [count]           "+r"(count),
-          [value_shifted]   "=r"(value_shifted)
+          [value_shifted]   "+r"(value_shifted)
 
         // Inputs
         : [gpio_out_addr]   "r"(addressWrite),
