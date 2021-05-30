@@ -21,6 +21,7 @@ namespace jtag {
     const uint8_t TDO = 5;
     const uint8_t RST = 6;
 
+    // Redudant, but left dormant here for documentation to show it was implemented in C before it was re-implemented into asm
     template<uint8_t WHAT_SIGNAL>
     __attribute__((optimize("-Ofast")))
     uint32_t shift(const uint32_t len, uint32_t number) {
@@ -133,27 +134,16 @@ namespace jtag {
     }
 
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-    // Test demo
-    void demo() {
-      jtag::tap::reset();
-//      for (int number = 0; number < jtag::tap::tapStateSize; number++) {
-//        jtag::tap::stateMove(static_cast<jtag::tap::state_e>(number));
-////        shiftTms({8, 0b11111111});
-////        shift<TMS>(32, number);
-//      }
-
-      jtag::tap::stateMove(jtag::tap::state_e::RunTestIdle);
-      jtag::tap::stateMove(jtag::tap::state_e::UpdateIr);
+    void shiftTms(uint32_t length, uint32_t write_value) {
+      shiftAsm8<TMS>(length, write_value);
     }
 
-#ifdef __cplusplus
-}
-#endif
+
+    uint32_t shiftTdi(uint32_t length, uint32_t write_value) {
+      return shiftAsm8<TDI>(length, write_value);
+    }
+
+
   }
 }
 

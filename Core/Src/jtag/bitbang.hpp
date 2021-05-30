@@ -19,7 +19,9 @@ namespace jtag {
 
     void shiftTms(jtag::tap::tmsMove move);
 
-    void demo(void);
+    void shiftTms(uint32_t length, uint32_t write_value);
+
+    uint32_t shiftTdi(uint32_t length, uint32_t write_value);
 
   }
 }
