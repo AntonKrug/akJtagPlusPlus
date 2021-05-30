@@ -15,11 +15,11 @@ namespace jtag {
 
   namespace bitbang {
 
-    const uint8_t TCK = 2;
-    const uint8_t TMS = 3;
-    const uint8_t TDI = 4;
-    const uint8_t TDO = 5;
-    const uint8_t RST = 6;
+    const uint8_t TCK   = 2;
+    const uint8_t TMS   = 3;
+    const uint8_t TDI   = 4;
+    const uint8_t TDO   = 5;
+    const uint8_t nTRST = 6;
 
 
     template<uint8_t number>
@@ -34,7 +34,7 @@ namespace jtag {
     // GPIOE->ODR => AHB1PERIPH_BASE + 0x1000UL + 0x14
     // GPIOE->ODR => PERIPH_BASE + 0x00020000UL + 0x1000UL + 0x14
     // GPIOE->ODR => 0x40000000 + 0x00020000UL + 0x1000UL + 0x14 => 0x40021014
-    template<uint8_t WHAT_SIGNAL>
+    template<uint8_t WHAT_SIGNAL, uint8_t nTRSTvalue>
     __attribute__((optimize("-Ofast")))
     uint32_t shiftAsm8MHz(const uint32_t length, uint32_t write_value) {
       // This has 8.0000MHz TCK at 52% duty cycle (removing the NOPs below can make it slightly faster and with duty 48% or below)
@@ -54,6 +54,7 @@ namespace jtag {
         // Low part of the TCK
         "and.w %[shift_out],   %[write_value],    #1               \n\t"  // shift_out = write_value & 1
         "lsls  %[shift_out],   %[shift_out],      %[write_shift]   \n\t"  // shift_out = shift_out << write_shift
+        "and.w %[shift_out],   %[shift_out],      %[reset_value]   \n\t"  // shift_out = shift_out | (nRSTvlaue << nRST)
         "str   %[shift_out],   [%[gpio_out_addr]]                  \n\t"  // GPIO = shift_out
 
         // On first cycle this is redundant, as it processed the shift_in from the previous iteration
@@ -97,7 +98,8 @@ namespace jtag {
           [write_value]     "r"(write_value),
           [write_shift]     "M"(WHAT_SIGNAL),
           [read_shift]      "M"(TDO),
-          [clock_mask]      "I"(powerOfTwo<TCK>())
+          [clock_mask]      "I"(powerOfTwo<TCK>()),
+          [reset_value]     "I"(nTRSTvalue << nTRST)
 
         // Clobbers
         : "memory"
@@ -108,23 +110,24 @@ namespace jtag {
 
 
     void shiftTms(jtag::tap::tmsMove move) {
-      shiftAsm8MHz<TMS>(move.amountOfBitsToShift, move.valueToShift);
+      shiftAsm8MHz<TMS, 1>(move.amountOfBitsToShift, move.valueToShift);
     }
 
 
     void shiftTmsRaw(uint32_t length, uint32_t write_value) {
-      shiftAsm8MHz<TMS>(length, write_value);
+      shiftAsm8MHz<TMS, 1>(length, write_value);
     }
 
 
     uint32_t shiftTdi(uint32_t length, uint32_t write_value) {
-      return shiftAsm8MHz<TDI>(length, write_value);
+      return shiftAsm8MHz<TDI, 1>(length, write_value);
     }
 
 
     void resetTarget(uint8_t length) {
       // length has to be under 32
-      shiftAsm8MHz<RST>(length, 0x0000'0000);
+      // We will pull the reset low, while shifting 1s to TMS (which should put it into reset and keep it there on its own as well)
+      shiftAsm8MHz<TMS, 0>(length, 0xffff'ffff);
     }
 
 
