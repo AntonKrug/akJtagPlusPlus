@@ -114,13 +114,25 @@ namespace jtag {
     }
 
 
-    void shiftTms(uint32_t length, uint32_t write_value) {
+    void shiftTmsRaw(uint32_t length, uint32_t write_value) {
       shiftAsm8<TMS>(length, write_value);
     }
 
 
     uint32_t shiftTdi(uint32_t length, uint32_t write_value) {
       return shiftAsm8<TDI>(length, write_value);
+    }
+
+
+    void resetTarget(uint8_t length) {
+      // length has to be under 32
+      shiftAsm8<RST>(length, 0xffff'ffff);
+    }
+
+
+    void resetTargetRelease(uint8_t length) {
+      // length has to be under 32
+      shiftAsm8<RST>(length, 0x0000'0000);
     }
 
 
