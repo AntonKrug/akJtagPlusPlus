@@ -6,6 +6,8 @@
  *     License: GPLv2
  */
 
+#include <array>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -14,14 +16,13 @@ extern "C" {
 #include "tap.hpp"
 #include "bitbang.hpp"
 
-
 namespace jtag {
 
 	namespace tap {
 
 	  state_e currentState = state_e::TestLogicReset;
 
-		tmsMove tapMoves [tapStateSize][tapStateSize] = {
+		tmsMove tapMoves [state_e_size][state_e_size] = {
 
 		    // Lookup table with how many TCK clocks and what TMS bits has to be shifted to move from one
 		    // state to the other state inside the TAP state machine
@@ -59,9 +60,16 @@ namespace jtag {
 
 
 		void stateMove(state_e whereToMove) {
-		  auto whatToShift = tapMoves[static_cast<int>(currentState)][static_cast<int>(whereToMove)];
+		  auto currentStateInt = static_cast<int>(currentState);
+		  auto whereToMoveInt  = static_cast<int>(whereToMove);
+		  auto whatToShift     = tapMoves[currentStateInt][whereToMoveInt];
+
 		  jtag::bitbang::shiftTms(whatToShift);
 		  currentState = whereToMove;
+
+#ifdef JTAG_TAP_TELEMETRY
+		  telemetry::statsCallMade(whereToMove);
+#endif
 		}
 
 
@@ -69,10 +77,16 @@ namespace jtag {
 		namespace telemetry {
 
 		  struct display_entry_s {
-        const char*       name;
-        const uint32_t    color;
-        const uint16_t    x;
-        const uint16_t    y;
+        const char*    name;
+        const uint32_t color;
+        const uint16_t x;
+        const uint16_t y;
+      };
+
+
+      struct stats_entry_s {
+        uint32_t calls;  // How many calls made to this state
+        uint32_t time;   // How much time spend in this state TODO: implement this
       };
 
 
@@ -104,6 +118,9 @@ namespace jtag {
       };
 
 
+      std::array<stats_entry_s, tap::state_e_size> statsEntries = { 0 };
+
+
       void displayStateMachineDiagram() {
         for (auto entry: displayEntries) {
           BSP_LCD_SetBackColor(entry.color);
@@ -119,6 +136,41 @@ namespace jtag {
         }
       }
 
+
+      void statsCallMade(tap::state_e state) {
+        auto stateInt = static_cast<int>(state);
+
+        statsEntries[stateInt].calls++;
+      }
+
+
+      void statsClearAll() {
+        for (int i=0; i<tap::state_e_size; i++) {
+          statsEntries[i].calls = 0;
+          statsEntries[i].time  = 0;
+        }
+      }
+
+
+      void statsDisplayCallsAndTime() {
+        uint32_t callsMax = 1; // set it to 1 instead of 0 to avoid division by 0
+
+        // Get the maximum amount of calls, so we know what will be the value range for the graphs to be scaled automatically
+        for (auto entry: statsEntries) {
+          if (entry.calls > callsMax) callsMax= entry.calls;
+        }
+
+        BSP_LCD_SetTextColor(LCD_COLOR_RED);
+        for (int i=0; i<tap::state_e_size; i++) {
+          auto diagramEntry = displayEntries[i];
+          auto statEntry    = statsEntries[i];
+          auto lineSize     = ((blockWidth + 4) * statEntry.calls) / callsMax;
+
+          BSP_LCD_DrawHLine(diagramEntry.x -2, diagramEntry.y + fontHeight + 2 + 0, lineSize);
+          BSP_LCD_DrawHLine(diagramEntry.x -2, diagramEntry.y + fontHeight + 2 + 1, lineSize);
+        }
+
+      }
 
 		}
 #endif

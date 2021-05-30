@@ -10,7 +10,6 @@
 #ifndef SRC_JTAG_TAP_HPP_
 #define SRC_JTAG_TAP_HPP_
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,7 +43,7 @@ namespace jtag {
       LAST_ENUM
     };
 
-    const int tapStateSize = static_cast<int>(state_e::LAST_ENUM);
+    const int state_e_size = static_cast<int>(state_e::LAST_ENUM);
 
     extern state_e currentState;
 
@@ -59,7 +58,11 @@ namespace jtag {
 
 #ifdef JTAG_TAP_TELEMETRY
     namespace telemetry {
+      void statsCallMade(tap::state_e state);
+
       void displayStateMachineDiagram(void);
+
+      void statsDisplayCallsAndTime(void);
     }
 #endif
 

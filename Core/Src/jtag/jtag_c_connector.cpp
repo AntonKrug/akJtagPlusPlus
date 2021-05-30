@@ -37,12 +37,14 @@ void jtag_loop() {
   jtag::tap::stateMove(jtag::tap::state_e::ShiftIr);
   uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0x0000'0000);
 
-  char buf[20];
-  sprintf(buf, "0x%08x", (unsigned int)(IDcode));
+  char buf[30];
+  sprintf(buf, "ID = 0x%08x", (unsigned int)(IDcode));
 
+  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
   BSP_LCD_DisplayString(5, 270, buf);
 
-  for (int number = 0; number < jtag::tap::tapStateSize; number++) {
+  for (int number = 0; number < jtag::tap::state_e_size; number++) {
     jtag::tap::stateMove(static_cast<jtag::tap::state_e>(number));
     jtag::bitbang::shiftTms({8, 0b11111111});
     jtag::bitbang::shiftTmsRaw(32, number);
@@ -50,6 +52,8 @@ void jtag_loop() {
 
   jtag::tap::stateMove(jtag::tap::state_e::RunTestIdle);
   jtag::tap::stateMove(jtag::tap::state_e::UpdateIr);
+
+  jtag::tap::telemetry::statsDisplayCallsAndTime();
 }
 
 
