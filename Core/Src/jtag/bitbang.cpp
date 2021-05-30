@@ -36,8 +36,8 @@ namespace jtag {
     // GPIOE->ODR => 0x40000000 + 0x00020000UL + 0x1000UL + 0x14 => 0x40021014
     template<uint8_t WHAT_SIGNAL, uint8_t nTRSTvalue>
     __attribute__((optimize("-Ofast")))
-    uint32_t shiftAsm8MHz(const uint32_t length, uint32_t write_value) {
-      // This has 8.0000MHz TCK at 52% duty cycle (removing the NOPs below can make it slightly faster and with duty 48% or below)
+    uint32_t shiftAsmUltraSpeed(const uint32_t length, uint32_t write_value) {
+      // This has 9.363MHz TCK at 50% duty cycle (removing the NOPs below can make it slightly faster and with duty 48% or below)
       uint32_t addressWrite = GPIOE_BASE + 0x14; // ODR register of GPIO port E
       uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
 
@@ -110,24 +110,24 @@ namespace jtag {
 
 
     void shiftTms(jtag::tap::tmsMove move) {
-      shiftAsm8MHz<PIN_TMS, 1>(move.amountOfBitsToShift, move.valueToShift);
+      shiftAsmUltraSpeed<PIN_TMS, 1>(move.amountOfBitsToShift, move.valueToShift);
     }
 
 
     void shiftTmsRaw(uint32_t length, uint32_t write_value) {
-      shiftAsm8MHz<PIN_TMS, 1>(length, write_value);
+      shiftAsmUltraSpeed<PIN_TMS, 1>(length, write_value);
     }
 
 
     uint32_t shiftTdi(uint32_t length, uint32_t write_value) {
-      return shiftAsm8MHz<PIN_TDI, 1>(length, write_value);
+      return shiftAsmUltraSpeed<PIN_TDI, 1>(length, write_value);
     }
 
 
     void resetTarget(uint8_t length) {
       // length has to be under 32
       // We will pull the reset low, while shifting 1s to TMS (which should put it into reset and keep it there on its own as well)
-      shiftAsm8MHz<PIN_TMS, 0>(length, 0xffff'ffff);
+      shiftAsmUltraSpeed<PIN_TMS, 0>(length, 0xffff'ffff);
     }
 
 
