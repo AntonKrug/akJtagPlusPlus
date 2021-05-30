@@ -124,7 +124,7 @@ namespace jtag {
 
     void resetTarget(uint8_t length) {
       // length has to be under 32
-      shiftAsm8MHz<RST>(length, 0xffff'ffff);
+      shiftAsm8MHz<RST>(length, 0x0000'0000);
     }
 
 
