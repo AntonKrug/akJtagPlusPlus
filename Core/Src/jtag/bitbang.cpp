@@ -36,7 +36,8 @@ namespace jtag {
     // GPIOE->ODR => 0x40000000 + 0x00020000UL + 0x1000UL + 0x14 => 0x40021014
     template<uint8_t WHAT_SIGNAL>
     __attribute__((optimize("-Ofast")))
-    uint32_t shiftAsm8(const uint32_t length, uint32_t write_value) {
+    uint32_t shiftAsm8MHz(const uint32_t length, uint32_t write_value) {
+      // This has 8.0000MHz TCK at 52% duty cycle (removing the NOPs below can make it slightly faster and with duty 48% or below)
       uint32_t addressWrite = GPIOE_BASE + 0x14; // ODR register of GPIO port E
       uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
 
@@ -108,29 +109,29 @@ namespace jtag {
 
 
     void shiftTms(jtag::tap::tmsMove move) {
-      shiftAsm8<TMS>(move.amountOfBitsToShift, move.valueToShift);
+      shiftAsm8MHz<TMS>(move.amountOfBitsToShift, move.valueToShift);
     }
 
 
     void shiftTmsRaw(uint32_t length, uint32_t write_value) {
-      shiftAsm8<TMS>(length, write_value);
+      shiftAsm8MHz<TMS>(length, write_value);
     }
 
 
     uint32_t shiftTdi(uint32_t length, uint32_t write_value) {
-      return shiftAsm8<TDI>(length, write_value);
+      return shiftAsm8MHz<TDI>(length, write_value);
     }
 
 
     void resetTargetHold(uint8_t length) {
       // length has to be under 32
-      shiftAsm8<RST>(length, 0xffff'ffff);
+      shiftAsm8MHz<RST>(length, 0xffff'ffff);
     }
 
 
     void resetTargetRelease(uint8_t length) {
       // length has to be under 32
-      shiftAsm8<RST>(length, 0x0000'0000);
+      shiftAsm8MHz<RST>(length, 0x0000'0000);
     }
 
     void resetTarget(uint8_t lengthHold, uint8_t lengthRelease) {
