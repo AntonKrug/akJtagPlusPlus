@@ -53,18 +53,18 @@ namespace jtag {
 		};
 
 		void reset() {
-		  jtag::bitbang::shiftTms({8, 0b11111111});
+		  bitbang::shiftTms({8, 0b11111111});
 
 		  currentState = state_e::TestLogicReset;
 		}
 
 
 		void stateMove(state_e whereToMove) {
-		  auto currentStateInt = static_cast<int>(currentState);
-		  auto whereToMoveInt  = static_cast<int>(whereToMove);
-		  auto whatToShift     = tapMoves[currentStateInt][whereToMoveInt];
+		  auto currentStateInt      = static_cast<int>(currentState);
+		  auto whereToMoveStateInt  = static_cast<int>(whereToMove);
+		  auto whatToShift          = tapMoves[currentStateInt][whereToMoveStateInt];
 
-		  jtag::bitbang::shiftTms(whatToShift);
+		  bitbang::shiftTms(whatToShift);
 		  currentState = whereToMove;
 
 #ifdef JTAG_TAP_TELEMETRY

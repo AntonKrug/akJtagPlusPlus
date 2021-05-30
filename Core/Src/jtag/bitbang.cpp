@@ -112,7 +112,7 @@ namespace jtag {
     }
 
 
-    void shiftTms(jtag::tap::tmsMove move) {
+    void shiftTms(tap::tmsMove move) {
       JTAG_SHIFT_TIMMING_START();
       shiftAsmUltraSpeed<PIN_TMS, 1>(move.amountOfBitsToShift, move.valueToShift);
       JTAG_SHIFT_TIMMING_END();

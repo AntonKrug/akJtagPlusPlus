@@ -18,7 +18,7 @@ extern "C" {
 namespace jtag {
   namespace bitbang {
 
-    void shiftTms(jtag::tap::tmsMove move);
+    void shiftTms(tap::tmsMove move);
 
     void shiftTmsRaw(uint32_t length, uint32_t write_value);
 
