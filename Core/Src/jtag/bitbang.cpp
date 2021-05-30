@@ -21,27 +21,6 @@ namespace jtag {
     const uint8_t TDO = 5;
     const uint8_t RST = 6;
 
-    // Redudant, but left dormant here for documentation to show it was implemented in C before it was re-implemented into asm
-    template<uint8_t WHAT_SIGNAL>
-    __attribute__((optimize("-Ofast")))
-    uint32_t shift(const uint32_t len, uint32_t number) {
-      uint32_t ret = 0;
-      for (uint32_t i=0; i<len; i++) {
-        GPIOE->ODR = ((number & 1) << WHAT_SIGNAL);
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        GPIOE->ODR = ((number & 1) << WHAT_SIGNAL) | (1 << TCK);
-        ret = ret << 1 | ( (GPIOE->IDR >> TDI) & 0x1);
-        number = number >> 1;
-      }
-      return ret;
-    }
-
 
     template<uint8_t number>
     constexpr uint8_t powerOfTwo() {
@@ -52,6 +31,7 @@ namespace jtag {
         }
         return ret;
     }
+
 
     // GPIOE->ODR => GPIOE_BASE + 0x14
     // GPIOE->ODR => AHB1PERIPH_BASE + 0x1000UL + 0x14
