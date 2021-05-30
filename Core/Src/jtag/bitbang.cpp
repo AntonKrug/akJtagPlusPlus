@@ -72,7 +72,6 @@ namespace jtag {
         // High part of the TCK + sample
         "str   %[shift_out],   [%[gpio_out_addr]]                  \n\t"  // GPIO = shift_out
         "nop                                                       \n\t"
-        "nop                                                       \n\t"
         "ldr   %[shift_in],    [%[gpio_in_addr]]                   \n\t"  // shift_in = GPIO
         "bne.n repeatForEachBit%=                                  \n\t"  // if (count != length) then  repeatForEachBit
 
@@ -123,22 +122,11 @@ namespace jtag {
     }
 
 
-    void resetTargetHold(uint8_t length) {
+    void resetTarget(uint8_t length) {
       // length has to be under 32
       shiftAsm8MHz<RST>(length, 0xffff'ffff);
     }
 
-
-    void resetTargetRelease(uint8_t length) {
-      // length has to be under 32
-      shiftAsm8MHz<RST>(length, 0x0000'0000);
-    }
-
-    void resetTarget(uint8_t lengthHold, uint8_t lengthRelease) {
-      // lengths have to be under 32
-      resetTargetHold(32);
-      resetTargetRelease(32);
-    }
 
   }
 }

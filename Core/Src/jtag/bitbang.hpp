@@ -23,11 +23,7 @@ namespace jtag {
 
     uint32_t shiftTdi(uint32_t length, uint32_t write_value);
 
-    void resetTargetHold(uint8_t length);
-
-    void resetTargetRelease(uint8_t length);
-
-    void resetTarget(uint8_t lengthHold, uint8_t lengthRelease);
+    void resetTarget(uint8_t length);
 
   }
 }

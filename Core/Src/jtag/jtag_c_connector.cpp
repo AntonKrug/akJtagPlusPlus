@@ -27,7 +27,7 @@ void jtag_setup() {
 
 void jtag_loop() {
 
-  jtag::bitbang::resetTarget(32, 32);
+  jtag::bitbang::resetTarget(32);
 
   jtag::tap::reset();  // Redundant, after target reset the tap would be in the reset anyway
 
