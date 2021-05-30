@@ -17,7 +17,7 @@ extern "C" {
 
 #ifdef JTAG_TAP_TELEMETRY
 void jtag_tap_telemetry_dispay() {
-  jtag::tap::telemetry::display();
+  jtag::tap::telemetry::displayStateMachineDiagram();
 }
 #endif
 

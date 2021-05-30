@@ -59,7 +59,7 @@ namespace jtag {
 
 #ifdef JTAG_TAP_TELEMETRY
     namespace telemetry {
-      void display(void);
+      void displayStateMachineDiagram(void);
     }
 #endif
 

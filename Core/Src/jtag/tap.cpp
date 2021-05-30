@@ -64,6 +64,7 @@ namespace jtag {
 		  currentState = whereToMove;
 		}
 
+
 #ifdef JTAG_TAP_TELEMETRY
 		namespace telemetry {
 
@@ -103,7 +104,7 @@ namespace jtag {
       };
 
 
-      void display() {
+      void displayStateMachineDiagram() {
         for (auto entry: displayEntries) {
           BSP_LCD_SetBackColor(entry.color);
 
