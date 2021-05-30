@@ -73,6 +73,8 @@ void Error_Handler(void);
 #define JTAG_TDI_GPIO_Port GPIOE
 #define JTAG_TDO_Pin GPIO_PIN_5
 #define JTAG_TDO_GPIO_Port GPIOE
+#define JTAG_nTRST_Pin GPIO_PIN_6
+#define JTAG_nTRST_GPIO_Port GPIOE
 #define A0_Pin GPIO_PIN_0
 #define A0_GPIO_Port GPIOF
 #define A1_Pin GPIO_PIN_1
