@@ -74,10 +74,9 @@ namespace jtag {
         "and.w %[shift_out],   %[write_value],    #1               \n\t"  // shift_out = write_value & 1
         "lsls  %[shift_out],   %[shift_out],      %[write_shift]   \n\t"  // shift_out = shift_out << pin_shift
         "str   %[shift_out],   [%[gpio_out_addr]]                  \n\t"  // GPIO = shift_out
-        "nop \n\t"
-        "nop \n\t"
 
         // On first cycle this is redundant, as it processed the shift_in from the previous iteration
+          "lsr   %[shift_in],    %[shift_in],       %[read_shift]   \n\t"  // shift_in = shift_in >> TDI
         "and.w %[shift_in],    %[shift_in],       #1              \n\t"  // shift_in = shift_in & 1
         "lsl   %[ret_value],   #1                                 \n\t"  // ret = ret << 1
         "orr.w %[ret_value],   %[ret_value],      %[shift_in]     \n\t"  // ret = ret | shift_in
@@ -91,8 +90,8 @@ namespace jtag {
 
         // High part of the TCK
         "str   %[shift_out],   [%[gpio_out_addr]]                 \n\t"  // GPIO = shift_out
+          "nop \n\t"
         "ldr   %[shift_in],    [%[gpio_in_addr]]                  \n\t"  // shift_in = GPIO
-        "lsr   %[shift_in],    %[shift_in],       %[read_shift]   \n\t"  // shift_in = shift_in >> TDI
         "bne.n repeatForEachBit%=                                 \n\t"  // if (count != lenght) then  repeatForEachBit
 
 
