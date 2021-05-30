@@ -42,7 +42,9 @@ namespace jtag {
     }
 
 
-    constexpr uint8_t powerOfTwo(uint8_t number) {
+    template<uint8_t number>
+    constexpr uint8_t powerOfTwo() {
+        static_assert(number <8, "Output would overflow, the JTAG pins are close to base of the register and you shouldn't need PIN8 or above anyway");
         int ret = 1;
         for (int i=0; i<number; i++) {
             ret *= 2;
@@ -115,7 +117,7 @@ namespace jtag {
           [write_value]     "r"(write_value),
           [write_shift]     "M"(WHAT_SIGNAL),
           [read_shift]      "M"(TDO),
-          [clock_mask]      "I"(powerOfTwo(TCK))
+          [clock_mask]      "I"(powerOfTwo<TCK>())
 
         // Clobbers
         : "memory"
