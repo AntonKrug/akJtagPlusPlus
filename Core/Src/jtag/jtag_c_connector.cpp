@@ -11,8 +11,11 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
+
 #include "jtag_c_connector.h"
 #include "bitbang.hpp"
+#include "stm32f429i_discovery_lcd.h"
 
 
 #ifdef JTAG_TAP_TELEMETRY
@@ -32,7 +35,12 @@ void jtag_loop() {
 
   jtag::tap::reset();  // Somewhat redundant, after target reset the tap would be in the reset anyway
   jtag::tap::stateMove(jtag::tap::state_e::ShiftIr);
-  auto IDcode = jtag::bitbang::shiftTdi(32, 0x0000'0000);
+  uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0x0000'0000);
+
+  char buf[20];
+  sprintf(buf, "0x%08x", (unsigned int)(IDcode));
+
+  BSP_LCD_DisplayString(5, 270, buf);
 
   for (int number = 0; number < jtag::tap::tapStateSize; number++) {
     jtag::tap::stateMove(static_cast<jtag::tap::state_e>(number));
