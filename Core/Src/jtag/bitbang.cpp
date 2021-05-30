@@ -66,7 +66,6 @@ namespace jtag {
       uint32_t ret_value = 0;
 
       asm volatile (
-        //   "mov %[read_value],  10                               \n\t"
         "cpsid if                                                  \n\t"  // Disable IRQ
         "repeatForEachBit%=:                                       \n\t"
 
@@ -76,10 +75,10 @@ namespace jtag {
         "str   %[shift_out],   [%[gpio_out_addr]]                  \n\t"  // GPIO = shift_out
 
         // On first cycle this is redundant, as it processed the shift_in from the previous iteration
-          "lsr   %[shift_in],    %[shift_in],       %[read_shift]   \n\t"  // shift_in = shift_in >> TDI
-        "and.w %[shift_in],    %[shift_in],       #1              \n\t"  // shift_in = shift_in & 1
-        "lsl   %[ret_value],   #1                                 \n\t"  // ret = ret << 1
-        "orr.w %[ret_value],   %[ret_value],      %[shift_in]     \n\t"  // ret = ret | shift_in
+        "lsr   %[shift_in],    %[shift_in],       %[read_shift]    \n\t"  // shift_in = shift_in >> TDI
+        "and.w %[shift_in],    %[shift_in],       #1               \n\t"  // shift_in = shift_in & 1
+        "lsl   %[ret_value],   #1                                  \n\t"  // ret = ret << 1
+        "orr.w %[ret_value],   %[ret_value],      %[shift_in]      \n\t"  // ret = ret | shift_in
 
         // Prepare things which are needed torward end of the loop, but can be done now
         "orr.w %[shift_out],   %[shift_out],      %[clock_mask]    \n\t"  // shift_out = shift_out | TCK
@@ -87,16 +86,20 @@ namespace jtag {
         "adds  %[count],       #1                                  \n\t"  // count++
         "cmp   %[count],       %[lenght]                           \n\t"  // if (count != lenght) then ....
 
+        // High part of the TCK + sample
+        "str   %[shift_out],   [%[gpio_out_addr]]                  \n\t"  // GPIO = shift_out
+        "nop                                                       \n\t"
+        "nop                                                       \n\t"
+        "ldr   %[shift_in],    [%[gpio_in_addr]]                   \n\t"  // shift_in = GPIO
+        "bne.n repeatForEachBit%=                                  \n\t"  // if (count != lenght) then  repeatForEachBit
 
-        // High part of the TCK
-        "str   %[shift_out],   [%[gpio_out_addr]]                 \n\t"  // GPIO = shift_out
-          "nop \n\t"
-          "nop \n\t"
-        "ldr   %[shift_in],    [%[gpio_in_addr]]                  \n\t"  // shift_in = GPIO
-        "bne.n repeatForEachBit%=                                 \n\t"  // if (count != lenght) then  repeatForEachBit
+        // Process the shift_in as normally it's done in the next iteration of the loop
+        "lsr   %[shift_in],    %[shift_in],       %[read_shift]    \n\t"  // shift_in = shift_in >> TDI
+        "and.w %[shift_in],    %[shift_in],       #1               \n\t"  // shift_in = shift_in & 1
+        "lsl   %[ret_value],   #1                                  \n\t"  // ret = ret << 1
+        "orr.w %[ret_value],   %[ret_value],      %[shift_in]      \n\t"  // ret = ret | shift_in
 
-
-        "cpsie if                                                 \n\t"  // Enable IRQ
+        "cpsie if                                                  \n\t"  // Enable IRQ
 
         // Outputs
         : [ret_value]       "+r"(ret_value),
@@ -110,7 +113,7 @@ namespace jtag {
           [lenght]          "r"(lenght),
           [write_value]     "r"(write_value),
           [write_shift]     "M"(WHAT_SIGNAL),
-          [read_shift]      "M"(TDI),
+          [read_shift]      "M"(TDO),
           [clock_mask]      "I"(powerOfTwo(TCK))
 
         // Clobbers
