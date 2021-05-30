@@ -57,8 +57,8 @@ namespace jtag {
     template<uint8_t WHAT_SIGNAL>
     __attribute__((optimize("-Ofast")))
     uint32_t shiftAsm(const uint32_t lenght, uint32_t write_value) {
-      volatile uint32_t addressWrite = GPIOE_BASE + 0x14; // ODR register of GPIO port E
-      volatile uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
+      uint32_t addressWrite = GPIOE_BASE + 0x14; // ODR register of GPIO port E
+      uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
 
       uint32_t count     = 0;
       uint32_t shift_out = 0;
@@ -93,13 +93,14 @@ namespace jtag {
         "ldr   %[shift_in],    [%[gpio_in_addr]]                   \n\t"  // shift_in = GPIO
         "bne.n repeatForEachBit%=                                  \n\t"  // if (count != lenght) then  repeatForEachBit
 
+        "cpsie if                                                  \n\t"  // Enable IRQ
+
         // Process the shift_in as normally it's done in the next iteration of the loop
         "lsr   %[shift_in],    %[shift_in],       %[read_shift]    \n\t"  // shift_in = shift_in >> TDI
         "and.w %[shift_in],    %[shift_in],       #1               \n\t"  // shift_in = shift_in & 1
         "lsl   %[ret_value],   #1                                  \n\t"  // ret = ret << 1
         "orr.w %[ret_value],   %[ret_value],      %[shift_in]      \n\t"  // ret = ret | shift_in
 
-        "cpsie if                                                  \n\t"  // Enable IRQ
 
         // Outputs
         : [ret_value]       "+r"(ret_value),
