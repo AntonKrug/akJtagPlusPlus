@@ -89,6 +89,8 @@ namespace jtag {
         uint32_t time;   // How much time spend in this state TODO: implement this
       };
 
+      // TODO: track global amount of move and TDI shift calls, tracking how much time is spent shifting might be too much overhead and not acurate enough
+
 
       const uint16_t rowFirstX   = 5;
       const uint16_t blockWidth  = 100;

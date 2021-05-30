@@ -9,8 +9,10 @@
 #include <cstdint>
 #include <array>
 
-#include "stm32f429xx.h"
 #include "bitbang.hpp"
+
+#include "main.h"
+#include "jtag_global.h"
 
 namespace jtag {
 
@@ -111,17 +113,23 @@ namespace jtag {
 
 
     void shiftTms(jtag::tap::tmsMove move) {
+      JTAG_SHIFT_TIMMING_START();
       shiftAsmUltraSpeed<PIN_TMS, 1>(move.amountOfBitsToShift, move.valueToShift);
+      JTAG_SHIFT_TIMMING_END();
     }
 
 
     void shiftTmsRaw(uint32_t length, uint32_t write_value) {
+      JTAG_SHIFT_TIMMING_START();
       shiftAsmUltraSpeed<PIN_TMS, 1>(length, write_value);
+      JTAG_SHIFT_TIMMING_END();
     }
 
 
     uint32_t shiftTdi(uint32_t length, uint32_t write_value) {
+      JTAG_SHIFT_TIMMING_START();
       return shiftAsmUltraSpeed<PIN_TDI, 1>(length, write_value);
+      JTAG_SHIFT_TIMMING_END();
     }
 
 
