@@ -75,7 +75,6 @@ namespace jtag {
         "nop                                                       \n\t"
         "nop                                                       \n\t"
         "nop                                                       \n\t"
-        "nop                                                       \n\t"
 
         // High part of the TCK
         "orr.w %[value_shifted], %[value_shifted],  %[clock_mask]  \n\t"  // value_shifted = value_shifted | TCK
@@ -108,7 +107,7 @@ namespace jtag {
 
     void shiftTms(jtag::tap::tmsMove move) {
       shiftAsm<TMS>(move.amountOfBitsToShift, move.valueToShift);
-      shift<TMS>(move.amountOfBitsToShift, move.valueToShift);
+//      shift<TMS>(move.amountOfBitsToShift, move.valueToShift);
     }
 
 
