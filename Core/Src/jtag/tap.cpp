@@ -3,6 +3,7 @@
  *
  *  Created on: May 27, 2021
  *      Author: anton.krug@gmail.com
+ *     License: GPLv2
  */
 
 #ifdef __cplusplus
@@ -63,7 +64,7 @@ namespace jtag {
 		  currentState = whereToMove;
 		}
 
-
+#ifdef JTAG_TAP_TELEMETRY
 		namespace telemetry {
 
 		  struct display_entry_s {
@@ -119,6 +120,8 @@ namespace jtag {
 
 
 		}
+#endif
+
 	}
 }
 

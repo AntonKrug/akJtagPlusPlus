@@ -3,6 +3,7 @@
  *
  *  Created on: May 27, 2021
  *      Author: anton.krug@gmail.com
+ *     License: GPLv2
  */
 
 
@@ -15,10 +16,12 @@ extern "C" {
 #endif
 
 #include <cstdint>
+#include "jtag_global.h"
 
 namespace jtag {
 
   namespace tap {
+
 
     // https://image.slidesharecdn.com/jtagpresentation-100723072934-phpapp01/95/jtag-presentation-17-728.jpg?cb=1279870813
     enum class state_e:uint32_t {
@@ -54,9 +57,11 @@ namespace jtag {
     void reset(void);
     void stateMove(state_e whereToMove);
 
+#ifdef JTAG_TAP_TELEMETRY
     namespace telemetry {
       void display(void);
     }
+#endif
 
 
   }

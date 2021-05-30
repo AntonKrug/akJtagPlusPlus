@@ -3,6 +3,7 @@
  *
  *  Created on: May 28, 2021
  *      Author: anton.krug@gmail.com
+ *     License: GPLv2
  */
 
 #ifndef SRC_JTAG_BITBANG_HPP_

@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "jtag_c_connector.h"
 #include "usbd_hid.h"
+#include "jtag_global.h"
 
 /* USER CODE END Includes */
 
@@ -134,7 +135,9 @@ int main(void)
 
   BSP_LCD_SetFont(&Font8);
 
+#ifdef JTAG_TAP_TELEMETRY
   jtag_tap_telemetry_dispay();
+#endif
 
   HAL_TIM_Base_Start_IT(&htim1);
 
