@@ -25,11 +25,8 @@ namespace jtag {
     template<uint8_t number>
     constexpr uint8_t powerOfTwo() {
         static_assert(number <8, "Output would overflow, the JTAG pins are close to base of the register and you shouldn't need PIN8 or above anyway");
-        int ret = 1;
-        for (int i=0; i<number; i++) {
-            ret *= 2;
-        }
-        return ret;
+
+        return (1 << number);
     }
 
 
@@ -59,13 +56,14 @@ namespace jtag {
         "str   %[shift_out],   [%[gpio_out_addr]]                  \n\t"  // GPIO = shift_out
 
         // On first cycle this is redundant, as it processed the shift_in from the previous iteration
+        // The first iteration is safe to do extraneously as it's just doing zeros
         "lsr   %[shift_in],    %[shift_in],       %[read_shift]    \n\t"  // shift_in = shift_in >> (pin # of TDI)
         "and.w %[shift_in],    %[shift_in],       #1               \n\t"  // shift_in = shift_in & 1
         "lsl   %[ret_value],   #1                                  \n\t"  // ret = ret << 1
         "orr.w %[ret_value],   %[ret_value],      %[shift_in]      \n\t"  // ret = ret | shift_in
 
         // Prepare things that are needed toward the end of the loop, but can be done now
-        "orr.w %[shift_out],   %[shift_out],      %[clock_mask]    \n\t"  // shift_out = shift_out | (1 << TCK)
+        "orr.w %[shift_out],   %[shift_out],      %[clock_mask]    \n\t"  // shift_out = shift_out | (1 << TCK) - setting TCK high
         "lsr   %[write_value], %[write_value],    #1               \n\t"  // write_value = write_value >> 1
         "adds  %[count],       #1                                  \n\t"  // count++
         "cmp   %[count],       %[length]                           \n\t"  // if (count != length) then ....
