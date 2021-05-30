@@ -40,6 +40,54 @@ namespace jtag {
     }
 
 
+    // GPIOE_BASE + 0x14
+    // AHB1PERIPH_BASE + 0x1000UL + 0x14
+    // PERIPH_BASE + 0x00020000UL + 0x1000UL + 0x14 => 0x21014
+    //
+    void shiftAsm(const uint32_t lenght, uint32_t value) {
+      uint32_t read_value;
+      asm (
+//          "mov %[count], #0 \n\t"
+//          "mov %[read_value], #10              \n\t"
+          "mov %[read_value], 10   \n\t"
+          "mov ip, #0 \n\t"
+          "add ip, %[gpio_out_addr_high]   \n\t"
+          "lsl ip, ip, #8 \n\t"
+          "add ip, %[gpio_out_addr_mid]   \n\t"
+          "lsl ip, ip, #8 \n\t"
+          "add ip, %[gpio_out_addr_low]   \n\t"
+          "LSL %[read_value], %[read_value], %[pin_shift]"
+//          "mov ip,            %[gpio_out_addr] \n\t"
+          : [read_value]        "=r"(read_value)
+          : [gpio_out_addr_low]  "I"((0x21014) & 0xff),
+            [gpio_out_addr_mid]  "I"((0x21014) & 0xff00 >> 8),
+            [gpio_out_addr_high] "I"((0x21014) & 0xff0000 >> 16),
+            [pin_shift]          "M"(2)
+      );
+//        "sample%=:                  \n\t"
+//        "in %[reg0],   %[addr]      \n\t"
+//        "in %[reg1],   %[addr]      \n\t"
+//        "in %[reg2],   %[addr]      \n\t"
+//        "in %[reg3],   %[addr]      \n\t"
+//        "inc %[major]               \n\t" // Increment the major counter
+//        "in %[reg4],   %[addr]      \n\t"
+//        "in %[reg5],   %[addr]      \n\t"
+//        "in %[reg6],   %[addr]      \n\t"
+//        "in %[reg7],   %[addr]      \n\t"
+//        "cpi %[major], %[major_max] \n\t" // Compare major counter with SINGLE_PIN_CAPACITIVE_SENSE_TIMEOUT
+//        "in %[reg8],   %[addr]      \n\t"
+//        "in %[reg9],   %[addr]      \n\t"
+//        "in %[reg10],  %[addr]      \n\t"
+//        "in %[reg11],  %[addr]      \n\t"
+//        "breq timeout%=             \n\t" // Branch if equal (major == SINGLE_PIN_CAPACITIVE_SENSE_TIMEOUT)
+//        "in %[reg12],  %[addr]      \n\t"
+//        "in %[reg13],  %[addr]      \n\t"
+//        "in %[reg14],  %[addr]      \n\t"
+//        "sbis %[addr], %[bit]       \n\t" // Skip if bit in I/O is set, no need to read the sample into a register
+//        "rjmp sample%=              \n\t"
+//      );
+    }
+
     void shiftTms(jtag::tap::tmsMove move) {
       shift<TMS>(move.amountOfBitsToShift, move.valueToShift);
     }
