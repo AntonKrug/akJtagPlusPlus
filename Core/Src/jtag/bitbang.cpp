@@ -91,6 +91,7 @@ namespace jtag {
         // High part of the TCK
         "str   %[shift_out],   [%[gpio_out_addr]]                 \n\t"  // GPIO = shift_out
           "nop \n\t"
+          "nop \n\t"
         "ldr   %[shift_in],    [%[gpio_in_addr]]                  \n\t"  // shift_in = GPIO
         "bne.n repeatForEachBit%=                                 \n\t"  // if (count != lenght) then  repeatForEachBit
 
