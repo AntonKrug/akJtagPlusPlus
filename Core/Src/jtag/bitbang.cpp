@@ -66,7 +66,7 @@ namespace jtag {
 
         // Low part of the TCK
         "and.w %[value_shifted], %[write_value],    #1             \n\t"  // value_shifted = write_value   & 1
-        "lsl   %[value_shifted], %[value_shifted],  %[pin_shift]   \n\t"  // value_shifted = value_shifted << pin_shift
+        "lsls  %[value_shifted], %[value_shifted],  %[pin_shift]   \n\t"  // value_shifted = value_shifted << pin_shift
         "str   %[value_shifted], [%[gpio_out_addr]]                \n\t"  // GPIO = value_shifted
         "nop                                                       \n\t"
         "nop                                                       \n\t"
@@ -82,9 +82,10 @@ namespace jtag {
         "str   %[value_shifted], [%[gpio_out_addr]]                \n\t"  // GPIO = value_shifted
         "nop                                                       \n\t"
         "lsr   %[write_value],   %[write_value],    #1             \n\t"  // write_value = write_value >> 1
-        "add.w %[count],         %[count],          #1             \n\t"  // count++
+        "adds  %[count],         %[count],          #1             \n\t"  // count++
         "cmp   %[count],         %[lenght]                         \n\t"  // if (count != lenght) then
-        "bne   repeatForEachBit%=                                  \n\t"  //   repeatForEachBit
+        "bne.n   repeatForEachBit%=                                \n\t"  //   repeatForEachBit
+
         "cpsie if                                                  \n\t"  // Enable IRQ
 
         // Outputs
