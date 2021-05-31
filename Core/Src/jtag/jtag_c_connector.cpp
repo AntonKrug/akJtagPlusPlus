@@ -34,11 +34,11 @@ void jtag_loop() {
   jtag::bitbang::resetTarget(32);
 
   jtag::tap::reset();  // Somewhat redundant, after target reset the tap would be in the reset anyway
-  jtag::tap::stateMove(jtag::tap::state_e::ShiftIr);
+  jtag::tap::stateMove(jtag::tap::state_e::ShiftDr);
   uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0x0000'0000);
 
   char buf[30];
-  sprintf(buf, "ID = 0x%08x", (unsigned int)(IDcode));
+  sprintf(buf, "ID = 0x%08X", (unsigned int)(IDcode));
 
   BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
   BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
