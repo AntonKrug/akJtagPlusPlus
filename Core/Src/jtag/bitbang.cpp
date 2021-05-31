@@ -109,6 +109,9 @@ namespace jtag {
         : "memory"
       );
 
+      // Shift the rest of bits as they were pushed from opposite direction
+      ret_value = ret_value >> (32 - length);
+
       return ret_value;
     }
 
