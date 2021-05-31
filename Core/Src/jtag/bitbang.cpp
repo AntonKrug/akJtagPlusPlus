@@ -62,9 +62,9 @@ namespace jtag {
 
         // On first cycle this is redundant, as it processed the in_value from the previous iteration
         // The first iteration is safe to do extraneously as it's just doing zeros
-        "lsr   %[in_value],    %[in_value],       %[read_shift]    \n\t"  // in_value = in_value >> (pin # of TDI)
-        "and.w %[in_value],    %[in_value],       #1               \n\t"  // in_value = in_value & 1
-        "lsl   %[ret_value],   #1                                  \n\t"  // ret_value = ret_value << 1
+        "and.w %[in_value],    %[in_value],       %[read_mask]     \n\t"  // in_value = in_value & ( 1 << TDI)
+        "lsl   %[in_value],    %[in_value],       %[read_shift]    \n\t"  // in_value = in_value >> (pin # of TDI)
+        "lsr   %[ret_value],   #1                                  \n\t"  // ret_value = ret_value >> 1
         "orr.w %[ret_value],   %[ret_value],      %[in_value]      \n\t"  // ret_value = ret_value | in_value
 
         // Prepare things that are needed toward the end of the loop, but can be done now
@@ -82,9 +82,9 @@ namespace jtag {
         "cpsie if                                                  \n\t"  // Enable IRQ, the critical section finished
 
         // Process the in_value as normally it's done in the next iteration of the loop
-        "lsr   %[in_value],    %[in_value],       %[read_shift]    \n\t"  // in_value = in_value >> TDI
-        "and.w %[in_value],    %[in_value],       #1               \n\t"  // in_value = in_value & 1
-        "lsl   %[ret_value],   #1                                  \n\t"  // ret_value = ret_value << 1
+        "and.w %[in_value],    %[in_value],       %[read_mask]     \n\t"  // in_value = in_value & ( 1 << TDI)
+        "lsl   %[in_value],    %[in_value],       %[read_shift]    \n\t"  // in_value = in_value >> (pin # of TDI)
+        "lsr   %[ret_value],   #1                                  \n\t"  // ret_value = ret_value >> 1
         "orr.w %[ret_value],   %[ret_value],      %[in_value]      \n\t"  // ret_value = ret_value | in_value
 
 
@@ -100,7 +100,8 @@ namespace jtag {
           [length]          "r"(length),
           [write_value]     "r"(write_value),
           [write_shift]     "M"(WHAT_SIGNAL),
-          [read_shift]      "M"(PIN_TDO),
+          [read_shift]      "M"(31-PIN_TDO),
+          [read_mask]       "I"(powerOfTwo<PIN_TDO>()),
           [clock_mask]      "I"(powerOfTwo<PIN_TCK>()),
           [reset_value]     "I"(nTRSTvalue << PIN_nTRST)
 
