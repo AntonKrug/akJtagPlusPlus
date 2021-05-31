@@ -162,6 +162,12 @@ namespace jtag {
           if (entry.calls > callsMax) callsMax= entry.calls;
         }
 
+        BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+        for (int i=0; i<tap::state_e_size; i++) {
+          BSP_LCD_DrawHLine(diagramEntry.x -2, diagramEntry.y + fontHeight + 2 + 0, blockWidth + 4);
+          BSP_LCD_DrawHLine(diagramEntry.x -2, diagramEntry.y + fontHeight + 2 + 1, blockWidth + 4);
+        }
+
         BSP_LCD_SetTextColor(LCD_COLOR_RED);
         for (int i=0; i<tap::state_e_size; i++) {
           auto diagramEntry = displayEntries[i];
