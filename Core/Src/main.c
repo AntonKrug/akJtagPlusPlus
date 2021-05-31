@@ -578,17 +578,24 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, LD3_Pin|LD4_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : JTAG_TCK_Pin JTAG_TMS_Pin JTAG_TDI_Pin JTAG_nTRST_Pin */
-  GPIO_InitStruct.Pin = JTAG_TCK_Pin|JTAG_TMS_Pin|JTAG_TDI_Pin|JTAG_nTRST_Pin;
+  /*Configure GPIO pin : JTAG_TCK_Pin */
+  GPIO_InitStruct.Pin = JTAG_TCK_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+  HAL_GPIO_Init(JTAG_TCK_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : JTAG_TMS_Pin JTAG_TDI_Pin JTAG_nTRST_Pin */
+  GPIO_InitStruct.Pin = JTAG_TMS_Pin|JTAG_TDI_Pin|JTAG_nTRST_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pin : JTAG_TDO_Pin */
   GPIO_InitStruct.Pin = JTAG_TDO_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(JTAG_TDO_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : JTAG_VJTAG_Pin */
