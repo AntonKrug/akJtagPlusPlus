@@ -2,6 +2,10 @@
 
 Experimental JTAG dongle implemented in C++
 
+Allowing users to interact with JTAG enabled devices with USB, or with LCD (and touch screen).
+
+Limited to only minimalistic official (vanila) JTAG specification (no custom vendor commands) and 3.3V based devices. However it's possible to convert it to different voltages, or allow level conversion to range of voltages. And adding protocols/commands is possible as well if their specification is published.
+
 [![Generic badge](https://img.shields.io/badge/License-GPLv2-green.svg)](https://github.com/AntonKrug/akJtagPlusPlus/blob/main/LICENSE)
 
 [![WIP](https://img.shields.io/badge/Work%20in%20progress%3F-yes-orange.svg)](https://github.com/AntonKrug/akJtagPlusPlus/commits/main)
