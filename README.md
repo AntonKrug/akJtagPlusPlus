@@ -4,7 +4,7 @@ Experimental JTAG dongle implemented in C++
 
 [![Generic badge](https://img.shields.io/badge/License-GPLv2-green.svg)](https://github.com/AntonKrug/akJtagPlusPlus/blob/main/LICENSE)
 
-[![WIP](https://img.shields.io/badge/Work%20Fin%20Fprogress%3F-yes-brown.svg)](https://github.com/AntonKrug/akJtagPlusPlus/commits/main)
+[![WIP](https://img.shields.io/badge/Work%20in%20progress%3F-yes-orange.svg)](https://github.com/AntonKrug/akJtagPlusPlus/commits/main)
 
 # Build
 
@@ -12,9 +12,15 @@ Based upon STM32F429ZI-DISC1 devboard with small daughter board connected to it 
 
 # Daughter board schematics and PCB
 
+KiCad project files are located in the [schematics](/schematics/adapterBoard) folder.
+
 ![photo](../assets/images/photo.jpg)
 
+## Schematic
+
 ![schematic](../assets/images/schematic.png)
+
+## PCB
 
 ![pcb](../assets/images/pcb.png)
 
