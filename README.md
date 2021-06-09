@@ -15,7 +15,7 @@ The JTAG signals are bitbanged in SW, but written in assembly to make sure that 
 
 Depending on the revision the specifics sometimes change, but I try to keep it around 9MHz and around 50% duty cycle. For example if I wanted to have 8MHz exactly, then I couldn't have exact 50% duty cycle, because 168MHz / 8MHz is 21 clocks per period and can't be split evenly to 50:50 and small deviation from 50% duty cycle is necesary for some TCK frequencies.
 
-![scope](../assets/images/tck-50.jpg)
+![scope](../assets/images/tck-50.png)
 
 # Build
 
