@@ -9,7 +9,7 @@ Limited to only minimalistic official (vanila) JTAG specification (no custom ven
 [![Generic badge](https://img.shields.io/badge/License-GPLv2-green.svg)](https://github.com/AntonKrug/akJtagPlusPlus/blob/main/LICENSE) [![WIP](https://img.shields.io/badge/Work%20in%20progress%3F-yes-orange.svg)](https://github.com/AntonKrug/akJtagPlusPlus/commits/main) [![IDE](https://img.shields.io/badge/IDE-STM32%20CubeIDE%201.6-blue.svg)](https://www.st.com/en/development-tools/stm32cubeide.html) [![EDA](https://img.shields.io/badge/EDA-KiCAD-navy.svg)](https://www.kicad.org/)
 
 
-# Bitbanging
+# Bit-banging
 
 The JTAG signals are bitbanged in SW, but written in assembly to make sure that the duty cycle stays the way it's expected as C/C++ can produce fast code, but it wouldn't gurantee the timing of the signals. In my assembly the sampling of read signals is happening around 2/3 of the clock period.
 
@@ -19,7 +19,7 @@ Depending on the revision the specifics sometimes change, but I try to keep it a
 
 # Build
 
-Based upon STM32F429ZI-DISC1 devboard with small daughter board connected to it (schematics/board below). To build the binaries, the project needs to be imported to a STM32cubeIDE 1.6 workspace and built with a Ctrl + B.
+Based upon [STM32F429ZI-DISC1](https://www.st.com/en/evaluation-tools/32f429idiscovery.html) devboard with small daughter board connected to it (schematics/board below). To build the binaries, the project needs to be imported to a STM32cubeIDE 1.6 workspace and built with a Ctrl + B.
 
 # Daughter board schematics and PCB
 
