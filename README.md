@@ -39,6 +39,8 @@ KiCad project files are located in the [schematics](/schematics/adapterBoard) fo
 
 https://en.wikipedia.org/wiki/Joint_Test_Action_Group
 
+https://en.wikipedia.org/wiki/JTAG
+
 http://openocd.org/doc-release/html/JTAG-Commands.html
 
 http://openocd.org/doc/doxygen/html/ftdi_8c.html
