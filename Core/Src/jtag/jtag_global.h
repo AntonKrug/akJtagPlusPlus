@@ -12,6 +12,10 @@
 #include "main.h"
 
 
+#define JTAG_FW_VERSION 1
+
+#define JTAG_USB_REPORT_SIZE 32
+
 #define JTAG_TAP_TELEMETRY // Comment-out to disable the TAP state machine telemetry
 
 //#define JTAG_SHIFT_TIMMING // Comment-out to disable the bitbang shifting time LED output (can be used on the scope to count time spent bit-banging)
