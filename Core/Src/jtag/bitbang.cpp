@@ -18,11 +18,14 @@ namespace jtag {
 
   namespace bitbang {
 
-    const uint8_t PIN_TCK   = 2;
-    const uint8_t PIN_TMS   = 3;
-    const uint8_t PIN_TDI   = 4;
-    const uint8_t PIN_TDO   = 5;
-    const uint8_t PIN_nTRST = 6;
+    const uint8_t PIN_E_TCK   = 2;
+    const uint8_t PIN_E_TMS   = 3;
+    const uint8_t PIN_E_TDI   = 4;
+    const uint8_t PIN_E_TDO   = 5;
+    const uint8_t PIN_E_nTRST = 6;
+
+    const uint8_t PIN_C_VJTAG = 13;
+    const uint8_t PIN_C_nSRST = 14;
 
 
     template<uint8_t number>
@@ -45,7 +48,7 @@ namespace jtag {
       uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
 
       uint32_t count     = 0;  // Counting how many bits are processed. Starting from 1 up to 'length' (inclusive) value. Set here to 0, but the code will increment it to 1 before the first check
-      uint32_t out_value = 0;  // Internal register to write values into the GPIO (driven by write_value, WHAT_SIGNAL, PIN_TCK and nTRSTvalue)
+      uint32_t out_value = 0;  // Internal register to write values into the GPIO (driven by write_value, WHAT_SIGNAL, PIN_E_TCK and nTRSTvalue)
       uint32_t in_value  = 0;  // Internal register to read raw values from GPIO and then masked/shifted correctly into the ret_value
       uint32_t ret_value = 0;  // Output variable returning content from the TDI pin (driven from the in_value)
 
@@ -100,10 +103,10 @@ namespace jtag {
           [length]          "r"(length),
           [write_value]     "r"(write_value),
           [write_shift]     "M"(WHAT_SIGNAL),
-          [read_shift]      "M"(31-PIN_TDO),
-          [read_mask]       "I"(powerOfTwo<PIN_TDO>()),
-          [clock_mask]      "I"(powerOfTwo<PIN_TCK>()),
-          [reset_value]     "I"(nTRSTvalue << PIN_nTRST)
+          [read_shift]      "M"(31-PIN_E_TDO),
+          [read_mask]       "I"(powerOfTwo<PIN_E_TDO>()),
+          [clock_mask]      "I"(powerOfTwo<PIN_E_TCK>()),
+          [reset_value]     "I"(nTRSTvalue << PIN_E_nTRST)
 
         // Clobbers
         : "memory"
@@ -118,21 +121,21 @@ namespace jtag {
 
     void shiftTms(tap::tmsMove move) {
       JTAG_SHIFT_TIMMING_START();
-      shiftAsmUltraSpeed<PIN_TMS, 1>(move.amountOfBitsToShift, move.valueToShift);
+      shiftAsmUltraSpeed<PIN_E_TMS, 1>(move.amountOfBitsToShift, move.valueToShift);
       JTAG_SHIFT_TIMMING_END();
     }
 
 
     void shiftTmsRaw(uint32_t length, uint32_t write_value) {
       JTAG_SHIFT_TIMMING_START();
-      shiftAsmUltraSpeed<PIN_TMS, 1>(length, write_value);
+      shiftAsmUltraSpeed<PIN_E_TMS, 1>(length, write_value);
       JTAG_SHIFT_TIMMING_END();
     }
 
 
     uint32_t shiftTdi(uint32_t length, uint32_t write_value) {
       JTAG_SHIFT_TIMMING_START();
-      return shiftAsmUltraSpeed<PIN_TDI, 1>(length, write_value);
+      return shiftAsmUltraSpeed<PIN_E_TDI, 1>(length, write_value);
       JTAG_SHIFT_TIMMING_END();
     }
 
@@ -140,7 +143,7 @@ namespace jtag {
     void resetTarget(uint8_t length) {
       // length has to be under 32
       // We will pull the reset low, while shifting 1s to TMS (which should put it into reset and keep it there on its own as well)
-      shiftAsmUltraSpeed<PIN_TMS, 0>(length, 0xffff'ffff);
+      shiftAsmUltraSpeed<PIN_E_TMS, 0>(length, 0xffff'ffff);
     }
 
 

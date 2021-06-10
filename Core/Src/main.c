@@ -567,6 +567,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, JTAG_TCK_Pin|JTAG_TMS_Pin|JTAG_TDI_Pin|JTAG_nTRST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(JTAG_nSRST_GPIO_Port, JTAG_nSRST_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(CSX_GPIO_Port, CSX_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -603,6 +606,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(JTAG_VJTAG_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : JTAG_nSRST_Pin */
+  GPIO_InitStruct.Pin = JTAG_nSRST_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(JTAG_nSRST_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : CSX_Pin */
   GPIO_InitStruct.Pin = CSX_Pin;
