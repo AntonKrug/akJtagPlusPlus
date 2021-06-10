@@ -8,6 +8,9 @@
 #ifndef SRC_JTAG_USB_HPP_
 #define SRC_JTAG_USB_HPP_
 
+#include <cstdint>
+
+#include "jtag_global.h"
 
 namespace jtag {
 
@@ -15,9 +18,26 @@ namespace jtag {
 
 
     struct commandHandler_s {
-      uint8_t (*fun_ptr)(uint32_t *bufRequest, uint32_t *bufResponse);
+      uint8_t (*fun_ptr)(uint32_t **bufRequest, uint32_t **bufResponse);
     };
 
+
+    // If the terminationValue is set to 0 and used in handleRquest, then
+    // there is no need to check for buffer overflows. Because the command
+    // handlers only increment the buffer as much as they process, the API
+    // has dedidcated command ID 0 to end processing and the handleQueue
+    // will finish processing naturally without doing extra checks.
+    struct requestBuffer_s {
+      uint32_t buf[JTAG_USB_REPORT_SIZE];
+      uint32_t terminationValue;
+    };
+
+    // No need to check for overflows and no need to have termination,
+    // each single command consumes equal or more bytes from the request buffer
+    // than it can produce into the response buffer.
+    struct responseBuffer_s {
+      uint32_t buf[JTAG_USB_REPORT_SIZE];
+    };
 
     enum class api_e:uint32_t {
       end_processing, // do not process any other command from the buffer
