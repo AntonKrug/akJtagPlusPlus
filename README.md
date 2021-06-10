@@ -31,6 +31,13 @@ KiCad project files are located in the [schematics](/schematics/adapterBoard) fo
 
 ![schematic](../assets/images/schematic.png)
 
+# USB
+
+Is implemented by using the [STM32F429ZI-DISC1](https://www.st.com/en/evaluation-tools/32f429idiscovery.html) USB port, PID:VID has to be determined yet.
+The class of device is HID, with fairly small report size (32bytes) and no extra drivers are necesary (bundled drivers with the OS are fine) and application
+can use HID RAW APIs to interact with the device directly.
+
+
 ## PCB
 
 ![pcb](../assets/images/pcb.png)
