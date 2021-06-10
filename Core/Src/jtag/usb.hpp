@@ -18,7 +18,7 @@ namespace jtag {
 
 
     struct commandHandler_s {
-      uint8_t (*fun_ptr)(uint32_t **bufRequest, uint32_t **bufResponse);
+      void (*fun_ptr)(uint32_t **bufRequest, uint32_t **bufResponse);
     };
 
 
