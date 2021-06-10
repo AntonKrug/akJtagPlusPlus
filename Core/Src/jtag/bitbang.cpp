@@ -18,14 +18,14 @@ namespace jtag {
 
   namespace bitbang {
 
-    const uint8_t PIN_E_TCK   = 2;
-    const uint8_t PIN_E_TMS   = 3;
-    const uint8_t PIN_E_TDI   = 4;
-    const uint8_t PIN_E_TDO   = 5;
-    const uint8_t PIN_E_nTRST = 6;
+    const uint8_t PIN_E_TCK   = 2;  // Test Clock
+    const uint8_t PIN_E_TMS   = 3;  // Test Mode Select
+    const uint8_t PIN_E_TDI   = 4;  // Test Data In  (from the TAP perspective). Writing to the target   (from host perspective)
+    const uint8_t PIN_E_TDO   = 5;  // Test Data Out (from the TAP perspective). Reading from the target (from host perspective)
+    const uint8_t PIN_E_nTRST = 6;  // negated TAP Reset
 
     const uint8_t PIN_C_VJTAG = 13;
-    const uint8_t PIN_C_nSRST = 14;
+    const uint8_t PIN_C_nSRST = 14; // negated System Reset
 
 
     template<uint8_t number>
