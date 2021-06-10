@@ -53,7 +53,7 @@ namespace jtag {
       last_enum
     };
 
-
+    constexpr uint32_t api_e_size = static_cast<uint32_t>(api_e::last_enum);
 
 
   }
