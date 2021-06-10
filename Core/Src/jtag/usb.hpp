@@ -14,7 +14,7 @@ namespace jtag {
   namespace usb {
 
 
-    struct hander {
+    struct commandHandler_s {
       void (*fun_ptr)(uint32_t *buf);
       uint8_t bufferIncrement;
     };
