@@ -14,6 +14,10 @@ namespace jtag {
   namespace usb {
 
 
+    struct hander {
+      void (*fun_ptr)(uint32_t *buf);
+      uint8_t bufferIncrement;
+    };
 
 
     enum class api_e:uint32_t {
