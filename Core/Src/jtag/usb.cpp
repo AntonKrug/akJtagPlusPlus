@@ -12,35 +12,46 @@ namespace jtag {
 
   namespace usb {
 
-    requestBuffer_s  request = {};
+    requestBuffer_s  request  = {};
     responseBuffer_s response = {};
 
-    uint8_t skip(uint32_t **reqHandle, uint32_t **resHandle) {
-      *reqHandle++;
-      return 1;
+
+    void skip(uint32_t **reqHandle, uint32_t **resHandle) {
+      (*reqHandle)++;
     }
 
 
-    // Respond with own version to a ping
-    uint8_t ping(uint32_t **reqHandle, uint32_t **resHandle) {
-      *reqHandle++; // Just read the command from queue, point to the next command
+    // Respond to ping with own FW version
+    void ping(uint32_t **reqHandle, uint32_t **resHandle) {
+      (*reqHandle)++; // Just read the command from queue, point to the next command
 
       **resHandle=JTAG_FW_VERSION;
-      *resHandle++;
-      return 1;
+      (*resHandle)++;
     }
+
 
     commandHandler_s handlers[api_e_size] = {
-        &skip,
-        &ping,
+        { &skip },
+        { &ping },
     };
 
-    void handleQueue(uint32_t **reqHandle, uint32_t **resHandle) {
 
-      while (**reqHandle) {
+    void handleQueue(uint32_t *req, uint32_t *res) {
 
-      }
+      uint32_t commandId = *req;
+      req++;
+
+      do {
+        if (commandId >= api_e_size) break; // Command outside the API
+
+        handlers[commandId].fun_ptr(&req, &res);
+
+        commandId = *req;
+        req++;
+      } while (commandId);
+
     }
+
 
   }
 }
