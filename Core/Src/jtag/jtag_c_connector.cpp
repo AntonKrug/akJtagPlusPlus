@@ -31,7 +31,7 @@ void jtag_setup() {
 
 void jtag_loop() {
 
-  jtag::bitbang::resetSignal(0, 32);
+  jtag::bitbang::resetSignal(0, -1);
 
   jtag::tap::resetSM();  // Somewhat redundant, after target reset the tap would be in the reset anyway
   jtag::tap::stateMove(jtag::tap::state_e::ShiftDr);

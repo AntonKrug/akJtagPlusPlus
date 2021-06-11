@@ -24,7 +24,7 @@ namespace jtag {
 
     uint32_t shiftTdi(uint32_t length, uint32_t write_value);
 
-    void resetSignal(uint8_t isSrst, uint8_t length);
+    void resetSignal(uint8_t isSrst, int8_t length);
 
   }
 }

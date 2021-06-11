@@ -7,6 +7,7 @@
 
 
 #include "usb.hpp"
+#include "bitbang.hpp"
 
 namespace jtag {
 
@@ -28,6 +29,10 @@ namespace jtag {
 
 
     void reset(uint32_t **reqHandle, uint32_t **resHandle) {
+      uint32_t type = **reqHandle;
+      (*reqHandle)++;
+
+      jtag::bitbang::resetSignal(type, -1);
 
     }
 
@@ -38,7 +43,7 @@ namespace jtag {
     };
 
 
-    void handleQueue(uint32_t *req, uint32_t *res) {
+    void parseQueue(uint32_t *req, uint32_t *res) {
       // Handling of only non-zero buffers implemented
       // means that I can read the first command blindly
       // and do while checks later (for the next command in queue)
