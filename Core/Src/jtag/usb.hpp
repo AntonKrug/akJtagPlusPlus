@@ -17,9 +17,7 @@ namespace jtag {
   namespace usb {
 
 
-    struct commandHandler_s {
-      void (*fun_ptr)(uint32_t **bufRequest, uint32_t **bufResponse);
-    };
+    typedef void (*commandHandler)(uint32_t **bufRequest, uint32_t **bufResponse);
 
 
     // If the terminationValue is set to 0 and used in handleRquest, then

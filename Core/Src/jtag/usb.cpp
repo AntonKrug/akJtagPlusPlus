@@ -30,9 +30,9 @@ namespace jtag {
     }
 
 
-    commandHandler_s handlers[api_e_size] = {
-        { &skip },
-        { &ping },
+    commandHandler handlers[api_e_size] = {
+        &skip,
+        &ping,
     };
 
 
@@ -47,7 +47,7 @@ namespace jtag {
         if (commandId >= api_e_size) break; // Command outside the API
 
         // Invoke the command from the API function table
-        handlers[commandId].fun_ptr(&req, &res);
+        handlers[commandId](&req, &res);
 
         commandId = *req;
       } while (commandId);
