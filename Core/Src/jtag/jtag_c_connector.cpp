@@ -31,9 +31,9 @@ void jtag_setup() {
 
 void jtag_loop() {
 
-  jtag::bitbang::resetTarget(32);
+  jtag::bitbang::resetSignal(0, 32);
 
-  jtag::tap::reset();  // Somewhat redundant, after target reset the tap would be in the reset anyway
+  jtag::tap::resetSM();  // Somewhat redundant, after target reset the tap would be in the reset anyway
   jtag::tap::stateMove(jtag::tap::state_e::ShiftDr);
   uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0x0000'0000);
 

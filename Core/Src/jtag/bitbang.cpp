@@ -140,7 +140,9 @@ namespace jtag {
     }
 
 
-    void resetTarget(uint8_t length) {
+    void resetSignal(uint8_t isSrst, uint8_t length) {
+      // TODO: implement srst and trst
+      // should do signal reset instead of the state machine reset
       // length has to be under 32
       // We will pull the reset low, while shifting 1s to TMS (which should put it into reset and keep it there on its own as well)
       shiftAsmUltraSpeed<PIN_E_TMS, 0>(length, 0xffff'ffff);
