@@ -101,7 +101,7 @@ namespace jtag {
       };
 
       enum class endstate_e:bool {
-        useDefault,
+        useGlobal,
         readFromStream
       };
 
@@ -133,7 +133,7 @@ namespace jtag {
           (*resHandle)++;
         }
 
-        if (endstate == endstate_e::useDefault) {
+        if (endstate == endstate_e::useGlobal) {
           tap::stateMove(defaultEndState);
         } else {
           auto endState = (tap::state_e)(**reqHandle);
@@ -144,7 +144,6 @@ namespace jtag {
 
     }
 
-//    template<bool isIr, bool isRead, bool globalOpcodeLen, bool useDefaultEndState>
 
     commandHandler handlers[api_e_size] = {
         &skip,      // end_processing
@@ -162,10 +161,10 @@ namespace jtag {
         &setIrOpcodeLen,
         &setDrOpcodeLen,
 
-        &scan::generic<scan::capture_e::ir, scan::access_e::readAndWrite, scan::endstate_e::useDefault,     scan::opcodeLength_e::useGlobal>,
-        &scan::generic<scan::capture_e::ir, scan::access_e::write,        scan::endstate_e::useDefault,     scan::opcodeLength_e::useGlobal>,
-        &scan::generic<scan::capture_e::dr, scan::access_e::readAndWrite, scan::endstate_e::useDefault,     scan::opcodeLength_e::useGlobal>,
-        &scan::generic<scan::capture_e::dr, scan::access_e::write,        scan::endstate_e::useDefault,     scan::opcodeLength_e::useGlobal>,
+        &scan::generic<scan::capture_e::ir, scan::access_e::readAndWrite, scan::endstate_e::useGlobal,      scan::opcodeLength_e::useGlobal>,
+        &scan::generic<scan::capture_e::ir, scan::access_e::write,        scan::endstate_e::useGlobal,      scan::opcodeLength_e::useGlobal>,
+        &scan::generic<scan::capture_e::dr, scan::access_e::readAndWrite, scan::endstate_e::useGlobal,      scan::opcodeLength_e::useGlobal>,
+        &scan::generic<scan::capture_e::dr, scan::access_e::write,        scan::endstate_e::useGlobal,      scan::opcodeLength_e::useGlobal>,
 
         &scan::generic<scan::capture_e::ir, scan::access_e::readAndWrite, scan::endstate_e::readFromStream, scan::opcodeLength_e::useGlobal>,
         &scan::generic<scan::capture_e::ir, scan::access_e::write,        scan::endstate_e::readFromStream, scan::opcodeLength_e::useGlobal>,
