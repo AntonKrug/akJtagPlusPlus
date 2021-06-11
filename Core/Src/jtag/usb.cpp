@@ -83,6 +83,45 @@ namespace jtag {
     }
 
 
+    template<bool isIr, bool isRead, bool globalOpcodeLen, bool useDefaultEndState>
+    void scan(uint32_t **reqHandle, uint32_t **resHandle) {
+      // Arguments in the stream are DATA, [LEN], [END_STATE]
+
+      uint32_t data = **reqHandle;
+      (*reqHandle)++;
+
+      if (isIr) {
+        tap::stateMove(tap::state_e::CaptureIr);
+      } else {
+        tap::stateMove(tap::state_e::CaptureDr);
+      }
+
+      uint8_t length;
+      if (globalOpcodeLen) {
+        length = (isIr) ? irOpcodeLen : drOpcodeLen;
+      } else {
+        length = **reqHandle;
+        (*reqHandle)++;
+      }
+
+      uint32_t read = bitbang::shiftTdi(length, data);
+
+      if (isRead) {
+        **resHandle=read;
+        (*resHandle)++;
+      }
+
+      if (useDefaultEndState) {
+        tap::stateMove(defaultEndState);
+      } else {
+        auto endState = (tap::state_e)(**reqHandle);
+        tap::stateMove(endState);
+      }
+
+    }
+
+//    template<bool isIr, bool isRead, bool globalOpcodeLen, bool useDefaultEndState>
+
     commandHandler handlers[api_e_size] = {
         &skip,      // end_processing
 
@@ -98,6 +137,8 @@ namespace jtag {
 
         &setIrOpcodeLen,
         &setDrOpcodeLen,
+
+        &scan<1, 1, 1, 1>,
     };
 
 
