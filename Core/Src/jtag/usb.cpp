@@ -39,24 +39,43 @@ namespace jtag {
 
 
     void stateMove(uint32_t **reqHandle, uint32_t **resHandle) {
-      uint32_t endState = **reqHandle;
+      auto endState = (tap::state_e)(**reqHandle);
       (*reqHandle)++;
 
-      defaultEndState = (tap::state_e)endState;
+      defaultEndState = endState;
+    }
+
+
+    void pathMove(uint32_t **reqHandle, uint32_t **resHandle) {
+      auto endState = (tap::state_e)(**reqHandle);
+      (*reqHandle)++;
+
+      tap::stateMove(endState);
+    }
+
+
+    void runTest(uint32_t **reqHandle, uint32_t **resHandle) {
+      uint32_t count = **reqHandle;
+      (*reqHandle)++;
+
+      for (int i = 0; i < count; i++) {
+        tap::stateMove(tap::state_e::RunTestIdle);
+      }
     }
 
 
     commandHandler handlers[api_e_size] = {
         &skip,      // end_processing
 
-        &ping,      // ping
-        &reset,     // reset
+        &ping,
+        &reset,
         &skip,      // setLed
         &skip,      // setTCK
         &skip,      // getTCK
 
-        &stateMove
-
+        &stateMove,
+        &pathMove,
+        &runTest,
     };
 
 
