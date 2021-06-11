@@ -41,11 +41,10 @@ namespace jtag {
       end_processing, // do not process any other command from the buffer
 
       ping,           // respond back what version this FW is
-
       reset,          // trst or srst
       setLed,
-      setSpeed,       // set TCK speed
-      getSpeed,       // get TCK speed
+      setTCK,         // set TCK speed
+      getTCK,         // get TCK speed
 
       stateMove,      // Specify endState after commands (don't change TAP SM)
       pathMove,       // move current state to the endstate (change TAP SM)
