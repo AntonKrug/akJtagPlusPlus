@@ -83,39 +83,63 @@ namespace jtag {
     }
 
 
-    template<bool isIr, bool isRead, bool globalOpcodeLen, bool useDefaultEndState>
-    void scan(uint32_t **reqHandle, uint32_t **resHandle) {
-      // Arguments in the stream are DATA, [LEN], [END_STATE]
+    namespace scan {
 
-      uint32_t data = **reqHandle;
-      (*reqHandle)++;
+      enum class capture_e:bool {
+        ir,
+        dr
+      };
 
-      if (isIr) {
-        tap::stateMove(tap::state_e::CaptureIr);
-      } else {
-        tap::stateMove(tap::state_e::CaptureDr);
-      }
+      enum class access_e:bool {
+        write,
+        readAndWrite
+      };
 
-      uint8_t length;
-      if (globalOpcodeLen) {
-        length = (isIr) ? irOpcodeLen : drOpcodeLen;
-      } else {
-        length = **reqHandle;
+      enum class opcodeLength_e:bool {
+        useGlobal,
+        readFromStream
+      };
+
+      enum class endstate_e:bool {
+        useDefault,
+        readFromStream
+      };
+
+      template<capture_e capture, access_e access, opcodeLength_e opcodeLength, endstate_e endstate>
+      void generic(uint32_t **reqHandle, uint32_t **resHandle) {
+        // Arguments in the stream are DATA, [LEN], [END_STATE]
+
+        uint32_t data = **reqHandle;
         (*reqHandle)++;
-      }
 
-      uint32_t read = bitbang::shiftTdi(length, data);
+        if (capture == capture_e::ir) {
+          tap::stateMove(tap::state_e::CaptureIr);
+        } else {
+          tap::stateMove(tap::state_e::CaptureDr);
+        }
 
-      if (isRead) {
-        **resHandle=read;
-        (*resHandle)++;
-      }
+        uint8_t length;
+        if (opcodeLength == opcodeLength_e::useGlobal) {
+          length = (capture == capture_e::ir) ? irOpcodeLen : drOpcodeLen;
+        } else {
+          length = **reqHandle;
+          (*reqHandle)++;
+        }
 
-      if (useDefaultEndState) {
-        tap::stateMove(defaultEndState);
-      } else {
-        auto endState = (tap::state_e)(**reqHandle);
-        tap::stateMove(endState);
+        uint32_t read = bitbang::shiftTdi(length, data);
+
+        if (access == access_e::readAndWrite) {
+          **resHandle=read;
+          (*resHandle)++;
+        }
+
+        if (endstate == endstate_e::useDefault) {
+          tap::stateMove(defaultEndState);
+        } else {
+          auto endState = (tap::state_e)(**reqHandle);
+          tap::stateMove(endState);
+        }
+
       }
 
     }
@@ -138,7 +162,7 @@ namespace jtag {
         &setIrOpcodeLen,
         &setDrOpcodeLen,
 
-        &scan<1, 1, 1, 1>,
+        &scan::generic<scan::capture_e::ir, scan::access_e::readAndWrite, scan::opcodeLength_e::useGlobal, scan::endstate_e::useDefault>,
     };
 
 
