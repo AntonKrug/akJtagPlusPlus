@@ -13,6 +13,8 @@ namespace jtag {
 
   namespace usb {
 
+    tap::state_e defaultEndState = tap::state_e::RunTestIdle;
+
     requestBuffer_s  request  = {};
     responseBuffer_s response = {};
 
@@ -32,14 +34,29 @@ namespace jtag {
       uint32_t type = **reqHandle;
       (*reqHandle)++;
 
-      jtag::bitbang::resetSignal(type, -1);
+      bitbang::resetSignal(type, -1);
+    }
 
+
+    void stateMove(uint32_t **reqHandle, uint32_t **resHandle) {
+      uint32_t endState = **reqHandle;
+      (*reqHandle)++;
+
+      defaultEndState = (tap::state_e)endState;
     }
 
 
     commandHandler handlers[api_e_size] = {
-        &skip,
-        &ping,
+        &skip,      // end_processing
+
+        &ping,      // ping
+        &reset,     // reset
+        &skip,      // setLed
+        &skip,      // setTCK
+        &skip,      // getTCK
+
+        &stateMove
+
     };
 
 
