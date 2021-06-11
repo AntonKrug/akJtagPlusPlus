@@ -58,7 +58,7 @@ namespace jtag {
       uint32_t count = **reqHandle;
       (*reqHandle)++;
 
-      for (int i = 0; i < count; i++) {
+      for (uint32_t i = 0; i < count; i++) {
         tap::stateMove(tap::state_e::RunTestIdle);
       }
     }
