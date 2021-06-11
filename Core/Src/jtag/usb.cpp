@@ -23,10 +23,10 @@ namespace jtag {
 
     // Respond to ping with own FW version
     void ping(uint32_t **reqHandle, uint32_t **resHandle) {
-      (*reqHandle)++; // Just read the command from queue, point to the next command
+      (*reqHandle)++;               // Just read the command from queue, point to the next command
 
-      **resHandle=JTAG_FW_VERSION;
-      (*resHandle)++;
+      **resHandle=JTAG_FW_VERSION;  // Populate response
+      (*resHandle)++;               // Increment response buffer
     }
 
 
@@ -37,17 +37,19 @@ namespace jtag {
 
 
     void handleQueue(uint32_t *req, uint32_t *res) {
-
+      // Handling of only non-zero buffers implemented
+      // means that I can read the first command blindly
+      // and do while checks later (for the next command in queue)
+      // should save one check
       uint32_t commandId = *req;
-      req++;
 
       do {
         if (commandId >= api_e_size) break; // Command outside the API
 
+        // Invoke the command from the API function table
         handlers[commandId].fun_ptr(&req, &res);
 
         commandId = *req;
-        req++;
       } while (commandId);
 
     }
