@@ -105,7 +105,7 @@ namespace jtag {
         readFromStream
       };
 
-      template<capture_e capture, access_e access, opcodeLength_e opcodeLength, endstate_e endstate>
+      template<capture_e capture, access_e access, endstate_e endstate, opcodeLength_e opcodeLength>
       void generic(uint32_t **reqHandle, uint32_t **resHandle) {
         // Arguments in the stream are DATA, [LEN], [END_STATE]
 
@@ -162,7 +162,7 @@ namespace jtag {
         &setIrOpcodeLen,
         &setDrOpcodeLen,
 
-        &scan::generic<scan::capture_e::ir, scan::access_e::readAndWrite, scan::opcodeLength_e::useGlobal, scan::endstate_e::useDefault>,
+        &scan::generic<scan::capture_e::ir, scan::access_e::readAndWrite, scan::endstate_e::useDefault, scan::opcodeLength_e::useGlobal>,
     };
 
 
