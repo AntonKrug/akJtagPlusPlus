@@ -18,6 +18,13 @@ namespace jtag {
     requestBuffer_s  request  = {};
     responseBuffer_s response = {};
 
+    // https://stackoverflow.com/questions/45650099
+    uint8_t irOpcodeLen = 4;
+
+    // https://techoverflow.net/2014/09/26/reading-stm32-unique-device-id-using-openocd/
+    // https://www.element14.com/community/docs/DOC-60353/l/stmicroelectronics-bsdl-files-for-stm32-boundary-scan-description-language
+    uint8_t drOpcodeLen = 32;
+
 
     void skip(uint32_t **reqHandle, uint32_t **resHandle) {
     }
@@ -64,6 +71,18 @@ namespace jtag {
     }
 
 
+    void setIrOpcodeLen(uint32_t **reqHandle, uint32_t **resHandle) {
+      irOpcodeLen = **reqHandle;
+      (*reqHandle)++;
+    }
+
+
+    void setDrOpcodeLen(uint32_t **reqHandle, uint32_t **resHandle) {
+      drOpcodeLen = **reqHandle;
+      (*reqHandle)++;
+    }
+
+
     commandHandler handlers[api_e_size] = {
         &skip,      // end_processing
 
@@ -76,6 +95,9 @@ namespace jtag {
         &stateMove,
         &pathMove,
         &runTest,
+
+        &setIrOpcodeLen,
+        &setDrOpcodeLen,
     };
 
 
