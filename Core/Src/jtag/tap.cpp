@@ -52,7 +52,7 @@ namespace jtag {
 		    /* UpdateIR    */ {  {3, 0b111},   {1, 0b0},   {1, 0b1},    {2, 0b01},   {3, 0b001},   {3, 0b101},   {4, 0b0101},   {5, 0b10101},   {4, 0b1101},   {2, 0b11},   {3, 0b011},   {4, 0b0011},   {4, 0b1011},   {5, 0b01011},   {6, 0b101011},   {5, 0b11011}    }
 		};
 
-		void reset() {
+		void resetSM() {
 		  bitbang::shiftTms({8, 0b11111111});
 
 		  currentState = state_e::TestLogicReset;

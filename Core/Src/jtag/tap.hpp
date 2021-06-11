@@ -53,7 +53,7 @@ namespace jtag {
     };
 
 
-    void reset(void);
+    void resetSM(void);
     void stateMove(state_e whereToMove);
 
 #ifdef JTAG_TAP_TELEMETRY
