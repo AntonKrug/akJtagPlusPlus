@@ -72,6 +72,8 @@ namespace jtag {
     constexpr uint32_t api_e_size = static_cast<uint32_t>(api_e::last_enum);
 
 
+    void parseQueue(uint32_t *req, uint32_t *res);
+
   }
 }
 
