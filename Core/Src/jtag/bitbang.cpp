@@ -47,10 +47,10 @@ namespace jtag {
       uint32_t addressWrite = GPIOE_BASE + 0x14; // ODR register of GPIO port E
       uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
 
-      uint32_t count    = 0;  // Counting how many bits are processed. Starting from 1 up to 'length' (inclusive) value. Set here to 0, but the code will increment it to 1 before the first check
-      uint32_t outValue = 0;  // Internal register to write values into the GPIO (driven by writeValue, WHAT_SIGNAL, PIN_E_TCK and nTRSTvalue)
-      uint32_t inValue  = 0;  // Internal register to read raw values from GPIO and then masked/shifted correctly into the retValue
-      uint32_t retValue = 0;  // Output variable returning content from the TDI pin (driven from the inValue)
+      uint32_t count    = length;  // Counting how many bits are processed. Starting from 1 up to 'length' (inclusive) value. Set here to 0, but the code will increment it to 1 before the first check
+      uint32_t outValue = 0;       // Internal register to write values into the GPIO (driven by writeValue, WHAT_SIGNAL, PIN_E_TCK and nTRSTvalue)
+      uint32_t inValue  = 0;       // Internal register to read raw values from GPIO and then masked/shifted correctly into the retValue
+      uint32_t retValue = 0;       // Output variable returning content from the TDI pin (driven from the inValue)
 
       asm volatile (
         "cpsid if                                                       \n\t"  // Disable IRQ temporary for critical moment
@@ -72,14 +72,12 @@ namespace jtag {
         // Prepare things that are needed toward the end of the loop, but can be done now
         "orr.w %[outValue],    %[outValue],       %[clock_mask]         \n\t"  // outValue = outValue | (1 << TCK) - setting TCK high
         "lsr   %[writeValue],  %[writeValue],     #1                    \n\t"  // writeValue = writeValue >> 1
-        "adds  %[count],       #1                                       \n\t"  // count++
-        "cmp   %[count],       %[length]                                \n\t"  // if (count != length) then ....
 
         // High part of the TCK + sample
         "str   %[outValue],    [%[gpioOutAddr]]                         \n\t"  // GPIO = outValue
-        "nop                                                            \n\t"
+        "subs  %[count],       #1                                       \n\t"  // count--
         "ldr   %[inValue],     [%[gpioInAddr]]                          \n\t"  // inValue = GPIO
-        "bne.n repeatForEachBit%=                                       \n\t"  // if (count != length) then  repeatForEachBit
+        "bne.n repeatForEachBit%=                                       \n\t"  // if (count != 0) then  repeatForEachBit
 
         "cpsie if                                                       \n\t"  // Enable IRQ, the critical section finished
 
@@ -98,7 +96,6 @@ namespace jtag {
         // Inputs
         : [gpioOutAddr]     "r"(addressWrite),
           [gpioInAddr]      "r"(addressRead),
-          [length]          "r"(length),
           [writeValue]      "r"(writeValue),
           [writeShift]      "M"(WHAT_SIGNAL),
           [readShift]       "M"(31-PIN_E_TDO),
