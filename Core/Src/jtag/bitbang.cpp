@@ -54,9 +54,9 @@ namespace jtag {
       uint32_t retValue  = 0;       // Output variable returning content from the TDI pin (driven from the inValue)
 
       asm volatile (
-        "cpsid if                                                                        \n\t"  // Disable IRQ temporary for critical moment
+        "cpsid if                                                                          \n\t"  // Disable IRQ temporary for critical moment
 
-        "repeatForEachBit%=:                                                             \n\t"
+        "repeatForEachBit%=:                                                               \n\t"
 
         // Low part of the TCK
         "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDO/TMS) &  (1 << TDO/TMS-Offset)
@@ -77,14 +77,14 @@ namespace jtag {
         "str.w   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
         "subs.w  %[count],       #1                                                        \n\t"  // count--
         "ldr.w   %[inValue],     [%[gpioInAddr]]                                           \n\t"  // inValue = GPIO
-        "bne.w repeatForEachBit%=                                                        \n\t"  // if (count != 0) then  repeatForEachBit
+        "bne.w repeatForEachBit%=                                                          \n\t"  // if (count != 0) then  repeatForEachBit
 
-        "cpsie if                                                                        \n\t"  // Enable IRQ, the critical section finished
+        "cpsie if                                                                          \n\t"  // Enable IRQ, the critical section finished
 
         // Process the inValue as normally it's done in the next iteration of the loop
-        "and   %[inValue],     %[inValue],        %[readMask]                            \n\t"  // inValue = inValue & ( 1 << TDI)
-        "lsl   %[inValue],     %[inValue],        %[readShift]                           \n\t"  // inValue = inValue << (pin # of TDI)
-        "orr   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
+        "and   %[inValue],     %[inValue],        %[readMask]                              \n\t"  // inValue = inValue & ( 1 << TDI)
+        "lsl   %[inValue],     %[inValue],        %[readShift]                             \n\t"  // inValue = inValue << (pin # of TDI)
+        "orr   %[retValue],    %[inValue],        %[retValue],   lsr #1                    \n\t"  // retValue = (retValue >> 1) | inValue
 
 
         // Outputs
