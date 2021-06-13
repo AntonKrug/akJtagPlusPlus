@@ -59,14 +59,14 @@ namespace jtag {
         "repeatForEachBit%=:                                                               \n\t"
 
         // Low part of the TCK
-        "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDO/TMS) &  (1 << TDO/TMS-Offset)
+        "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
         "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
         "str.w   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
 
         // On first cycle this is redundant, as it processed the inValue from the previous iteration
         // The first iteration is safe to do extraneously as it's just doing zeros
-        "and.w   %[inValue],     %[inValue],        %[readMask]                            \n\t"  // inValue = inValue & ( 1 << TDI)
-        "lsl.w   %[inValue],     %[inValue],        %[readShift]                           \n\t"  // inValue = inValue << (pin # of TDI)
+        "and.w   %[inValue],     %[inValue],        %[readMask]                            \n\t"  // inValue = inValue & ( 1 << TDO)
+        "lsl.w   %[inValue],     %[inValue],        %[readShift]                           \n\t"  // inValue = inValue << (pin # of TDO moved to MSB)
         "orr.w   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
 
         // Prepare things that are needed toward the end of the loop, but can be done now
@@ -82,8 +82,8 @@ namespace jtag {
         "cpsie if                                                                          \n\t"  // Enable IRQ, the critical section finished
 
         // Process the inValue as normally it's done in the next iteration of the loop
-        "and   %[inValue],     %[inValue],        %[readMask]                              \n\t"  // inValue = inValue & ( 1 << TDI)
-        "lsl   %[inValue],     %[inValue],        %[readShift]                             \n\t"  // inValue = inValue << (pin # of TDI)
+        "and   %[inValue],     %[inValue],        %[readMask]                              \n\t"  // inValue = inValue & ( 1 << TDO)
+        "lsl   %[inValue],     %[inValue],        %[readShift]                             \n\t"  // inValue = inValue << (pin # of TDO)
         "orr   %[retValue],    %[inValue],        %[retValue],   lsr #1                    \n\t"  // retValue = (retValue >> 1) | inValue
 
 
