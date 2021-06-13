@@ -18,11 +18,11 @@ namespace jtag {
 
   namespace bitbang {
 
-    const uint8_t PIN_E_TCK   = 2;  // Test Clock
-    const uint8_t PIN_E_TMS   = 3;  // Test Mode Select
+    const uint8_t PIN_E_TMS   = 2;  // Test Mode Select
+    const uint8_t PIN_E_TCK   = 3;  // Test Clock
     const uint8_t PIN_E_TDI   = 4;  // Test Data In  (from the TAP perspective). Writing to the target   (from host perspective)
-    const uint8_t PIN_E_TDO   = 5;  // Test Data Out (from the TAP perspective). Reading from the target (from host perspective)
-    const uint8_t PIN_E_nTRST = 6;  // negated TAP Reset
+    const uint8_t PIN_E_nTRST = 5;  // negated TAP Reset
+    const uint8_t PIN_E_TDO   = 6;  // Test Data Out (from the TAP perspective). Reading from the target (from host perspective)
 
     const uint8_t PIN_C_VJTAG = 13;
     const uint8_t PIN_C_nSRST = 14; // negated System Reset
@@ -66,7 +66,7 @@ namespace jtag {
         // On first cycle this is redundant, as it processed the inValue from the previous iteration
         // The first iteration is safe to do extraneously as it's just doing zeros
         "and   %[inValue],     %[inValue],        %[readMask]           \n\t"  // inValue = inValue & ( 1 << TDI)
-        "lsl   %[inValue],     %[inValue],        %[readShift]          \n\t"  // inValue = inValue >> (pin # of TDI)
+        "lsl   %[inValue],     %[inValue],        %[readShift]          \n\t"  // inValue = inValue << (pin # of TDI)
         "orr   %[retValue],    %[inValue],        %[retValue],  lsr #1  \n\t"  // retValue = (retValue >> 1) | inValue
 
         // Prepare things that are needed toward the end of the loop, but can be done now
@@ -83,7 +83,7 @@ namespace jtag {
 
         // Process the inValue as normally it's done in the next iteration of the loop
         "and   %[inValue],     %[inValue],        %[readMask]           \n\t"  // inValue = inValue & ( 1 << TDI)
-        "lsl   %[inValue],     %[inValue],        %[readShift]          \n\t"  // inValue = inValue >> (pin # of TDI)
+        "lsl   %[inValue],     %[inValue],        %[readShift]          \n\t"  // inValue = inValue << (pin # of TDI)
         "orr   %[retValue],    %[inValue],        %[retValue],  lsr #1  \n\t"  // retValue = (retValue >> 1) | inValue
 
 
