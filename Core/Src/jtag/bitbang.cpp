@@ -97,9 +97,9 @@ namespace jtag {
         : [gpioOutAddr]     "r"(addressWrite),
           [gpioInAddr]      "r"(addressRead),
           [writeMask]       "r"(writeMask),
-          [writeValue]      "r"(writeValue),  // only input?
-          [writeShiftRight] "M"(32-WHAT_SIGNAL),
-          [readShift]       "M"(31-PIN_E_TDO),
+          [writeValue]      "r"(writeValue),     // only input?
+          [writeShiftRight] "M"(32-WHAT_SIGNAL), // Shifting to left can be achieved by 32-N shifting to right
+          [readShift]       "M"(31-PIN_E_TDO),   // move the TDO bit to the 31th (MSB) bit
           [readMask]        "I"(powerOfTwo<PIN_E_TDO>()),
           [clock_mask]      "I"(powerOfTwo<PIN_E_TCK>()),
           [resetValue]      "I"(nTRSTvalue << PIN_E_nTRST)
