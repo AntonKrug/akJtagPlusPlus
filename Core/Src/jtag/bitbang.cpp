@@ -59,25 +59,25 @@ namespace jtag {
         "repeatForEachBit%=:                                                             \n\t"
 
         // Low part of the TCK
-        "and   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDO/TMS) &  (1 << TDO/TMS-Offset)
-        "orr   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
-        "str   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
+        "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDO/TMS) &  (1 << TDO/TMS-Offset)
+        "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
+        "str.w   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
 
         // On first cycle this is redundant, as it processed the inValue from the previous iteration
         // The first iteration is safe to do extraneously as it's just doing zeros
-        "and   %[inValue],     %[inValue],        %[readMask]                            \n\t"  // inValue = inValue & ( 1 << TDI)
-        "lsl   %[inValue],     %[inValue],        %[readShift]                           \n\t"  // inValue = inValue << (pin # of TDI)
-        "orr   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
+        "and.w   %[inValue],     %[inValue],        %[readMask]                            \n\t"  // inValue = inValue & ( 1 << TDI)
+        "lsl.w   %[inValue],     %[inValue],        %[readShift]                           \n\t"  // inValue = inValue << (pin # of TDI)
+        "orr.w   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
 
         // Prepare things that are needed toward the end of the loop, but can be done now
-        "orr   %[outValue],    %[outValue],       %[clock_mask]                          \n\t"  // outValue = outValue | (1 << TCK) - setting TCK high
-        "lsr   %[writeValue],  %[writeValue],     #1                                     \n\t"  // writeValue = writeValue >> 1
-        "subs  %[count],       #1                                                        \n\t"  // count--
+        "orr.w   %[outValue],    %[outValue],       %[clock_mask]                          \n\t"  // outValue = outValue | (1 << TCK) - setting TCK high
+        "lsr.w   %[writeValue],  %[writeValue],     #1                                     \n\t"  // writeValue = writeValue >> 1
+        "subs.w  %[count],       #1                                                        \n\t"  // count--
 
         // High part of the TCK + sample
-        "str   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
-        "ldr   %[inValue],     [%[gpioInAddr]]                                           \n\t"  // inValue = GPIO
-        "bne.n repeatForEachBit%=                                                        \n\t"  // if (count != 0) then  repeatForEachBit
+        "str.w   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
+        "ldr.w   %[inValue],     [%[gpioInAddr]]                                           \n\t"  // inValue = GPIO
+        "bne.w repeatForEachBit%=                                                        \n\t"  // if (count != 0) then  repeatForEachBit
 
         "cpsie if                                                                        \n\t"  // Enable IRQ, the critical section finished
 
