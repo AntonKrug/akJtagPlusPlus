@@ -72,10 +72,10 @@ namespace jtag {
         // Prepare things that are needed toward the end of the loop, but can be done now
         "orr   %[outValue],    %[outValue],       %[clock_mask]                          \n\t"  // outValue = outValue | (1 << TCK) - setting TCK high
         "lsr   %[writeValue],  %[writeValue],     #1                                     \n\t"  // writeValue = writeValue >> 1
+        "subs  %[count],       #1                                                        \n\t"  // count--
 
         // High part of the TCK + sample
         "str   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
-        "subs  %[count],       #1                                                        \n\t"  // count--
         "ldr   %[inValue],     [%[gpioInAddr]]                                           \n\t"  // inValue = GPIO
         "bne.n repeatForEachBit%=                                                        \n\t"  // if (count != 0) then  repeatForEachBit
 
