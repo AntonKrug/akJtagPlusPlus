@@ -85,25 +85,30 @@ namespace jtag {
 
     namespace scan {
 
+
       enum class capture_e:bool {
         ir,
         dr
       };
+
 
       enum class access_e:bool {
         write,
         readAndWrite
       };
 
+
       enum class opcodeLength_e:bool {
         useGlobal,
         readFromStream
       };
 
+
       enum class endstate_e:bool {
         useGlobal,
         readFromStream
       };
+
 
       template<capture_e capture, access_e access, endstate_e endstate, opcodeLength_e opcodeLength>
       void generic(uint32_t **reqHandle, uint32_t **resHandle) {
