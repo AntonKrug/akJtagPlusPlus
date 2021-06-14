@@ -51,7 +51,7 @@ namespace jtag {
       uint32_t readMask     = (1 << 31); // Masking the 31th (MSB) bit as we are shifting it already
       uint32_t count        = length;    // Counting how many bits are processed. Starting from 1 up to 'length' (inclusive) value. Set here to 0, but the code will increment it to 1 before the first check
       uint32_t outValue     = 0;         // Internal register to write values into the GPIO (driven by writeValue, WHAT_SIGNAL and nTRSTvalue)
-      uint32_t outValueTck  = 0;         // Internal register to write values into the GPIO (driven by writeValue, WHAT_SIGNAL and nTRSTvalue)
+      uint32_t outValueTck  = 0;         // Internal register to hold outValue + TCK high, without overriding the original outValue
       uint32_t inValue      = 0;         // Internal register to read raw values from GPIO and then masked/shifted correctly into the retValue
       uint32_t retValue     = 0;         // Output variable returning content from the TDI pin (driven from the inValue)
 
