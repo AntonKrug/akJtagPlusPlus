@@ -41,6 +41,10 @@
     (b) = (uint32_t *)(a); \
     (c) = (uint32_t *)((a) >> 32);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 namespace jtag {
 
@@ -90,5 +94,8 @@ namespace jtag {
   }
 }
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SRC_JTAG_USB_HPP_ */
