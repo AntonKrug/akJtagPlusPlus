@@ -134,15 +134,17 @@ namespace jtag {
         reqHandle++;
 
         if (capture == capture_e::ir) {
-          tap::stateMove(tap::state_e::CaptureIr);
+          tap::stateMove(tap::state_e::ShiftIr);
         } else {
-          tap::stateMove(tap::state_e::CaptureDr);
+          tap::stateMove(tap::state_e::ShiftDr);
         }
 
         uint32_t length;
         if (opcodeLength == opcodeLength_e::useGlobal) {
+          // Use the global length
           length = (capture == capture_e::ir) ? irOpcodeLen : drOpcodeLen;
         } else {
+          // Specified your own length in the packet
           length = *reqHandle;
           reqHandle++;
         }
@@ -150,12 +152,16 @@ namespace jtag {
         uint32_t read = bitbang::shiftTdi(length, data);
 
         if (access == access_e::readAndWrite) {
+          // Send back to the USB what you read
           *resHandle=read;
+          resHandle++;
         }
 
         if (endstate == endstate_e::useGlobal) {
+          // Go to the globally specified end state
           tap::stateMove(defaultEndState);
         } else {
+          // Read from the request packet what end state should go to
           auto endState = (tap::state_e)(*reqHandle);
           reqHandle++;
           tap::stateMove(endState);
