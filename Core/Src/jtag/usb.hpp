@@ -35,7 +35,7 @@
 // The decomposition trick not just produces no extra instructions, but produces less instructions than
 // when it's not used. Because when the decomposition is done is the moment when the 'toolchain' makes the click
 // and recognizes what it's done here and fully optimizes this approach.
-#define JTAG_COMBINE_REQ_RES(a,b)  ((uint32_t)(a) | (long long)(b) << 32)
+#define JTAG_COMBINE_REQ_RES(a,b)  ((uint32_t)(a) | (uint64_t)(b) << 32)
 
 #define JTAG_DECOMPOSE_REQ_RES(a,b,c) \
     (b) = (uint32_t *)(a); \
@@ -51,7 +51,7 @@ namespace jtag {
   namespace usb {
 
 
-    typedef long long requestAndResponse;
+    typedef uint64_t requestAndResponse;
     typedef requestAndResponse (*commandHandler)(uint32_t *bufRequest, uint32_t *bufResponse);
 
     enum class api_e:uint32_t {
