@@ -36,67 +36,68 @@ namespace jtag {
     uint8_t drOpcodeLen = 32;
 
 
-    uint32_t* skip(uint32_t *reqHandle, uint32_t *resHandle) {
-      return reqHandle;
+    requestAndResponse skip(uint32_t *reqHandle, uint32_t *resHandle) {
+      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
     }
 
 
     // Respond to ping with own FW version
-    uint32_t* ping(uint32_t *reqHandle, uint32_t *resHandle) {
+    requestAndResponse ping(uint32_t *reqHandle, uint32_t *resHandle) {
       *resHandle=JTAG_FW_VERSION;
-      return reqHandle;
+      resHandle++;
+      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
     }
 
 
-    uint32_t* reset(uint32_t *reqHandle, uint32_t *resHandle) {
+    requestAndResponse reset(uint32_t *reqHandle, uint32_t *resHandle) {
       uint32_t type = *reqHandle;
       reqHandle++;
 
       bitbang::resetSignal(type, -1);
-      return reqHandle;
+      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
     }
 
 
-    uint32_t* stateMove(uint32_t *reqHandle, uint32_t *resHandle) {
+    requestAndResponse stateMove(uint32_t *reqHandle, uint32_t *resHandle) {
       auto endState = (tap::state_e)(*reqHandle);
       reqHandle++;
 
       defaultEndState = endState;
-      return reqHandle;
+      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
     }
 
 
-    uint32_t* pathMove(uint32_t *reqHandle, uint32_t *resHandle) {
+    requestAndResponse pathMove(uint32_t *reqHandle, uint32_t *resHandle) {
       auto endState = (tap::state_e)(*reqHandle);
       reqHandle++;
 
       tap::stateMove(endState);
-      return reqHandle;
+      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
     }
 
 
-    uint32_t* runTest(uint32_t *reqHandle, uint32_t *resHandle) {
+    requestAndResponse runTest(uint32_t *reqHandle, uint32_t *resHandle) {
       uint32_t count = *reqHandle;
       reqHandle++;
 
       for (uint32_t i = 0; i < count; i++) {
         tap::stateMove(tap::state_e::RunTestIdle);
       }
-      return reqHandle;
+      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
     }
 
 
-    uint32_t* setIrOpcodeLen(uint32_t *reqHandle, uint32_t *resHandle) {
+    requestAndResponse setIrOpcodeLen(uint32_t *reqHandle, uint32_t *resHandle) {
       irOpcodeLen = *reqHandle;
       reqHandle++;
-      return reqHandle;
+      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
     }
 
 
-    uint32_t* setDrOpcodeLen(uint32_t *reqHandle, uint32_t *resHandle) {
+    requestAndResponse setDrOpcodeLen(uint32_t *reqHandle, uint32_t *resHandle) {
       drOpcodeLen = *reqHandle;
       reqHandle++;
-      return reqHandle;
+      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
     }
 
 
@@ -128,7 +129,7 @@ namespace jtag {
 
 
       template<capture_e capture, access_e access, endstate_e endstate, opcodeLength_e opcodeLength>
-      uint32_t* generic(uint32_t *reqHandle, uint32_t *resHandle) {
+      requestAndResponse generic(uint32_t *reqHandle, uint32_t *resHandle) {
         // Arguments in the stream are DATA, [LEN], [END_STATE]
         uint32_t data = *reqHandle;
         reqHandle++;
@@ -166,7 +167,7 @@ namespace jtag {
           reqHandle++;
           tap::stateMove(endState);
         }
-        return reqHandle;
+        return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
       }
 
     }
@@ -199,34 +200,6 @@ namespace jtag {
         &scan::generic<scan::capture_e::dr, scan::access_e::write,        scan::endstate_e::readFromStream, scan::opcodeLength_e::useGlobal>,
     };
 
-    uint32_t response_sizes[api_e_size] = {
-        0,      // end_processing
-
-        1,
-        0,
-        0,      // setLed
-        0,      // setTCK
-        1,      // getTCK
-
-        0,
-        0,
-        0,
-
-        0,
-        0,
-
-        1,
-        1,
-        1,
-        1,
-
-        1,
-        1,
-        1,
-        1,
-    };
-
-
 
     void parseQueue(uint32_t *req, uint32_t *res) {
       // Handling of only non-zero buffers implemented
@@ -238,9 +211,8 @@ namespace jtag {
       while (commandId == 0 && commandId < api_e_size)  {
         req++;
         // Invoke the command from the API function table
-        req = handlers[commandId](req, res);
-        res += response_sizes[commandId];
-
+        requestAndResponse combined = handlers[commandId](req, res);
+        JTAG_DECOMPOSE_REQ_RES(combined, req, res);
         commandId = *req;
       }
 
