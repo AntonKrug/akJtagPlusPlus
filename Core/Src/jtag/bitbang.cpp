@@ -47,21 +47,22 @@ namespace jtag {
       uint32_t addressWrite = GPIOE_BASE + 0x14; // ODR register of GPIO port E
       uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
 
-      uint32_t writeMask = (1 << WHAT_SIGNAL);
-      uint32_t readMask  = (1 << 31); // Masking the 31th (MSB) bit as we are shifting it already
-      uint32_t count     = length;    // Counting how many bits are processed. Starting from 1 up to 'length' (inclusive) value. Set here to 0, but the code will increment it to 1 before the first check
-      uint32_t outValue  = 0;         // Internal register to write values into the GPIO (driven by writeValue, WHAT_SIGNAL, PIN_E_TCK and nTRSTvalue)
-      uint32_t inValue   = 0;         // Internal register to read raw values from GPIO and then masked/shifted correctly into the retValue
-      uint32_t retValue  = 0;         // Output variable returning content from the TDI pin (driven from the inValue)
+      uint32_t writeMask    = (1 << WHAT_SIGNAL);
+      uint32_t readMask     = (1 << 31); // Masking the 31th (MSB) bit as we are shifting it already
+      uint32_t count        = length;    // Counting how many bits are processed. Starting from 1 up to 'length' (inclusive) value. Set here to 0, but the code will increment it to 1 before the first check
+      uint32_t outValue     = 0;         // Internal register to write values into the GPIO (driven by writeValue, WHAT_SIGNAL and nTRSTvalue)
+      uint32_t outValueTck  = 0;         // Internal register to write values into the GPIO (driven by writeValue, WHAT_SIGNAL and nTRSTvalue)
+      uint32_t inValue      = 0;         // Internal register to read raw values from GPIO and then masked/shifted correctly into the retValue
+      uint32_t retValue     = 0;         // Output variable returning content from the TDI pin (driven from the inValue)
 
       asm volatile (
         "cpsid if                                                                          \n\t"  // Disable IRQ temporary for critical moment
+        "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
+        "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
 
         "repeatForEachBit%=:                                                               \n\t"
 
         // Low part of the TCK
-        "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
-        "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
         "str.w   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
 
         // On first cycle this is redundant, as it processed the inValue from the previous iteration
@@ -70,8 +71,13 @@ namespace jtag {
         "orr.w   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
 
         // Prepare things that are needed toward the end of the loop, but can be done now
-        "orr.w   %[outValue],    %[outValue],       %[clock_mask]                          \n\t"  // outValue = outValue | (1 << TCK) - setting TCK high
+        "orr.w   %[outValueTck], %[outValue],       %[clock_mask]                          \n\t"  // outValue = outValue | (1 << TCK) - setting TCK high
         "lsr.w   %[writeValue],  %[writeValue],     #1                                     \n\t"  // writeValue = writeValue >> 1
+
+        // Prepare outvalue for the next iteration
+        "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
+        "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
+
 
         // High part of the TCK + sample
         "str.w   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
@@ -90,6 +96,7 @@ namespace jtag {
         : [retValue]        "+r"(retValue),
           [count]           "+r"(count),
           [outValue]        "+r"(outValue),
+          [outValueTck]     "+r"(outValueTck),
           [inValue]         "+r"(inValue)
 
         // Inputs
