@@ -36,68 +36,68 @@ namespace jtag {
     uint8_t drOpcodeLen = 32;
 
 
-    requestAndResponse skip(uint32_t *reqHandle, uint32_t *resHandle) {
-      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+    requestAndResponse skip(uint32_t *req, uint32_t *res) {
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
     // Respond to ping with own FW version
-    requestAndResponse ping(uint32_t *reqHandle, uint32_t *resHandle) {
-      *resHandle=JTAG_FW_VERSION;
-      resHandle++;
-      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+    requestAndResponse ping(uint32_t *req, uint32_t *res) {
+      *res=JTAG_FW_VERSION;
+      res++;
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
-    requestAndResponse reset(uint32_t *reqHandle, uint32_t *resHandle) {
-      uint32_t type = *reqHandle;
-      reqHandle++;
+    requestAndResponse reset(uint32_t *req, uint32_t *res) {
+      uint32_t type = *req;
+      req++;
 
       bitbang::resetSignal(type, -1);
-      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
-    requestAndResponse stateMove(uint32_t *reqHandle, uint32_t *resHandle) {
-      auto endState = (tap::state_e)(*reqHandle);
-      reqHandle++;
+    requestAndResponse stateMove(uint32_t *req, uint32_t *res) {
+      auto endState = (tap::state_e)(*req);
+      req++;
 
       defaultEndState = endState;
-      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
-    requestAndResponse pathMove(uint32_t *reqHandle, uint32_t *resHandle) {
-      auto endState = (tap::state_e)(*reqHandle);
-      reqHandle++;
+    requestAndResponse pathMove(uint32_t *req, uint32_t *res) {
+      auto endState = (tap::state_e)(*req);
+      req++;
 
       tap::stateMove(endState);
-      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
-    requestAndResponse runTest(uint32_t *reqHandle, uint32_t *resHandle) {
-      uint32_t count = *reqHandle;
-      reqHandle++;
+    requestAndResponse runTest(uint32_t *req, uint32_t *res) {
+      uint32_t count = *req;
+      req++;
 
       for (uint32_t i = 0; i < count; i++) {
         tap::stateMove(tap::state_e::RunTestIdle);
       }
-      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
-    requestAndResponse setIrOpcodeLen(uint32_t *reqHandle, uint32_t *resHandle) {
-      irOpcodeLen = *reqHandle;
-      reqHandle++;
-      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+    requestAndResponse setIrOpcodeLen(uint32_t *req, uint32_t *res) {
+      irOpcodeLen = *req;
+      req++;
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
-    requestAndResponse setDrOpcodeLen(uint32_t *reqHandle, uint32_t *resHandle) {
-      drOpcodeLen = *reqHandle;
-      reqHandle++;
-      return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+    requestAndResponse setDrOpcodeLen(uint32_t *req, uint32_t *res) {
+      drOpcodeLen = *req;
+      req++;
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
@@ -129,10 +129,10 @@ namespace jtag {
 
 
       template<capture_e capture, access_e access, endstate_e endstate, opcodeLength_e opcodeLength>
-      requestAndResponse generic(uint32_t *reqHandle, uint32_t *resHandle) {
+      requestAndResponse generic(uint32_t *req, uint32_t *res) {
         // Arguments in the stream are DATA, [LEN], [END_STATE]
-        uint32_t data = *reqHandle;
-        reqHandle++;
+        uint32_t data = *req;
+        req++;
 
         if (capture == capture_e::ir) {
           tap::stateMove(tap::state_e::ShiftIr);
@@ -146,16 +146,16 @@ namespace jtag {
           length = (capture == capture_e::ir) ? irOpcodeLen : drOpcodeLen;
         } else {
           // Specified your own length in the packet
-          length = *reqHandle;
-          reqHandle++;
+          length = *req;
+          req++;
         }
 
         uint32_t read = bitbang::shiftTdi(length, data);
 
         if (access == access_e::readAndWrite) {
           // Send back to the USB what you read
-          *resHandle=read;
-          resHandle++;
+          *res=read;
+          res++;
         }
 
         if (endstate == endstate_e::useGlobal) {
@@ -163,11 +163,11 @@ namespace jtag {
           tap::stateMove(defaultEndState);
         } else {
           // Read from the request packet what end state should go to
-          auto endState = (tap::state_e)(*reqHandle);
-          reqHandle++;
+          auto endState = (tap::state_e)(*req);
+          req++;
           tap::stateMove(endState);
         }
-        return JTAG_COMBINE_REQ_RES(reqHandle, resHandle);
+        return JTAG_COMBINE_REQ_RES(req, res);
       }
 
     }
@@ -202,16 +202,18 @@ namespace jtag {
 
 
     void parseQueue(uint32_t *req, uint32_t *res) {
-      // Handling of only non-zero buffers implemented
-      // means that I can read the first command blindly
-      // and do while checks later (for the next command in queue)
-      // should save one check
+      // Handling only non-zero buffers means that I can read the first command blindly
       uint32_t commandId = *req;
 
       while (commandId == 0 && commandId < api_e_size)  {
+        // Advance the pointer in the request stream, so the invoked functions
+        // will already have request stream pointing to their arguments (and not their commandId)
         req++;
+
         // Invoke the command from the API function table
         requestAndResponse combined = handlers[commandId](req, res);
+
+        // Take the combined returned value and assign it back to the request and response pointers
         JTAG_DECOMPOSE_REQ_RES(combined, req, res);
         commandId = *req;
       }
