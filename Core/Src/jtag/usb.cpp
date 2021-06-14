@@ -20,8 +20,7 @@ namespace jtag {
     // handlers only increment the buffer as much as they process, the API
     // has dedicated command ID 0 to end processing and the handleQueue
     // will finish processing naturally without doing extra checks.
-    uint32_t requestBuf[JTAG_USB_REPORT_SIZE];
-    uint32_t terminationValue = 0;
+    uint32_t requestBuf[JTAG_USB_REPORT_SIZE + 1] = { 0 };
 
     // No need to check for overflows and no need to have termination,
     // each single command consumes equal or more bytes from the request buffer
@@ -215,6 +214,10 @@ namespace jtag {
 
         // Take the combined returned value and assign it back to the request and response pointers
         JTAG_DECOMPOSE_REQ_RES(combined, req, res);
+
+        // Read the next commandId, this is safe to do blindly because even with full buffer, we
+        // allocated one word entry extra just for this case, which is pernamently 0 and
+        // commandID == 0 means end of processing
         commandId = *req;
       }
 
