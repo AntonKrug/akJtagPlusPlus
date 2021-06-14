@@ -15,6 +15,7 @@ extern "C" {
 
 #include "jtag_c_connector.h"
 #include "bitbang.hpp"
+#include "usb.hpp"
 #include "stm32f429i_discovery_lcd.h"
 
 
@@ -29,6 +30,9 @@ void jtag_setup() {
 }
 
 
+uint32_t requestBuf[JTAG_USB_REPORT_SIZE + 1] = { 0 };
+uint32_t responseBuf[JTAG_USB_REPORT_SIZE]    = { 0 };
+
 void jtag_loop() {
 
   jtag::bitbang::resetSignal(0, -1);
@@ -36,6 +40,11 @@ void jtag_loop() {
   jtag::tap::resetSM();  // Somewhat redundant, after target reset the tap would be in the reset anyway
   jtag::tap::stateMove(jtag::tap::state_e::ShiftDr);
   uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0x0000'0000);
+
+  uint32_t* req = requestBuf;
+  uint32_t* res = responseBuf;
+
+  jtag::usb::parseQueue(req, res);
 
   char buf[30];
   sprintf(buf, "ID = 0x%08X", (unsigned int)(IDcode));
