@@ -171,7 +171,7 @@ namespace jtag {
         }
 
         BSP_LCD_SetTextColor(LCD_COLOR_RED);
-        for (int i=0; i<tap::state_e_size; i++) {
+        for (int i=0; i < tap::state_e_size; i++) {
           auto diagramEntry = displayEntries[i];
           auto statEntry    = statsEntries[i];
           auto lineSize     = ((blockWidth + 4) * statEntry.calls) / callsMax;
