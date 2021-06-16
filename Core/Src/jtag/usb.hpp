@@ -23,6 +23,7 @@
 // - returning structures (will cause using stack even when ABI and R0 and R1 are sufficient enough to return pair of uint32_t structure
 // - partially returning one pointer and calculating offset of the second one (extra accesses to the lookup table
 //   and calculating the pointer for the second time (once inside the command function, once in the parent loop)
+// - union of uint64_t with a struct of uint32_t pair creates overhead as well and extra memory access
 // Usually all these methods didn't connected the connection that the input R0 and R1 are same as return R0 and R1, this
 // means that toolchain often saved the results to R4/R5 just to do increment and then to move it back to R1,
 // even if it could do these in place of R0/R1.
