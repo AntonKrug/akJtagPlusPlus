@@ -10,6 +10,7 @@
 #define SRC_JTAG_JTAG_C_CONNECTOR_H_
 
 #include "jtag_global.h"
+#include "combined_request_response.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,6 +23,8 @@ void jtag_tap_telemetry_dispay(void);
 void jtag_setup(void);
 
 void jtag_loop(void);
+
+requestAndResponse jtag_usb_parseQueue(uint32_t *req, uint32_t *res);
 
 
 #ifdef __cplusplus

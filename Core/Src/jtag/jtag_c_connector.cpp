@@ -33,6 +33,12 @@ void jtag_setup() {
 uint32_t requestBuf[JTAG_USB_REPORT_SIZE + 1] = { 0 };
 uint32_t responseBuf[JTAG_USB_REPORT_SIZE]    = { 0 };
 
+
+requestAndResponse jtag_usb_parseQueue(uint32_t *req, uint32_t *res) {
+  return jtag::usb::parseQueue(req, res);
+}
+
+
 void jtag_loop() {
 
   jtag::bitbang::resetSignal(0, -1);
