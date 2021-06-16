@@ -100,7 +100,7 @@ namespace jtag {
       const uint16_t lineHeight  = fontHeight + lineSpacing;
 
 
-      const display_entry_s displayEntries[] = {
+      const display_entry_s displayEntries[tap::state_e_size] = {
           { "Test Logic Reset", LCD_COLOR_BROWN,      rowFirstX,  0 * lineHeight + lineSpacing },
           { "Run Test / Idle",  LCD_COLOR_BROWN,      rowFirstX,  1 * lineHeight + lineSpacing  },
 
