@@ -200,7 +200,7 @@ namespace jtag {
     };
 
 
-    void parseQueue(uint32_t *req, uint32_t *res) {
+    requestAndResponse parseQueue(uint32_t *req, uint32_t *res) {
       // Handling only non-zero buffers means that I can read the first command blindly
       uint32_t commandId = *req;
 
@@ -221,6 +221,9 @@ namespace jtag {
         commandId = *req;
       }
 
+      // Return back the pointers, subtracting them later from the originals will tell us
+      // how much of the packet was processed and how much response was populated
+      return JTAG_COMBINE_REQ_RES(req, res);
     }
 
 
