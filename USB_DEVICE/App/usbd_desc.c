@@ -66,7 +66,7 @@
 #define USBD_VID     0x1209
 #define USBD_LANGID_STRING     1033
 #define USBD_MANUFACTURER_STRING     "Anton Krug"
-#define USBD_PID_HS    0xdeb0
+#define USBD_PID_HS     0xdeb0
 #define USBD_PRODUCT_STRING_HS     "AK Cube Gen1"
 #define USBD_CONFIGURATION_STRING_HS     "HID Config"
 #define USBD_INTERFACE_STRING_HS     "HID Interface"
