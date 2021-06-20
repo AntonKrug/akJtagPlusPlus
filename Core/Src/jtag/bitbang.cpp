@@ -56,9 +56,10 @@ namespace jtag {
       uint32_t retValue     = 0;         // Output variable returning content from the TDI pin (driven from the inValue)
 
       asm volatile (
-        "cpsid if                                                                          \n\t"  // Disable IRQ temporary for critical moment
-        "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
+        "and.w   %[outValue],    %[writeMask],      %[writeValue], ror %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
         "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
+
+        "cpsid if                                                                          \n\t"  // Disable IRQ temporary for critical moment
 
         "repeatForEachBit%=:                                                               \n\t"
 
@@ -67,7 +68,7 @@ namespace jtag {
 
         // On first cycle this is redundant, as it processed the inValue from the previous iteration
         // The first iteration is safe to do extraneously as it's just doing zeros
-        "and.w   %[inValue],     %[readMask],       %[inValue],    lsr %[readShift]        \n\t"  // inValue = (inValue << (from TDO-bit to 31th-bit)) & ( 1 << 31)
+        "and.w   %[inValue],     %[readMask],       %[inValue],    ror %[readShift]        \n\t"  // inValue = (inValue << (from TDO-bit to 31th-bit)) & ( 1 << 31)
         "orr.w   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
 
         // Prepare things that are needed toward the end of the loop, but can be done now
@@ -75,7 +76,7 @@ namespace jtag {
         "lsr.w   %[writeValue],  %[writeValue],     #1                                     \n\t"  // writeValue = writeValue >> 1
 
         // Prepare outvalue for the next iteration
-        "and.w   %[outValue],    %[writeMask],      %[writeValue], lsr %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
+        "and.w   %[outValue],    %[writeMask],      %[writeValue], ror %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
         "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
 
 
@@ -89,7 +90,7 @@ namespace jtag {
         "cpsie if                                                                          \n\t"  // Enable IRQ, the critical section finished
 
         // Process the inValue as normally it's done in the next iteration of the loop
-        "and.w   %[inValue],     %[readMask],       %[inValue],    lsr %[readShift]        \n\t"  // inValue = (inValue << (from TDO-bit to 31th-bit)) & ( 1 << 31)
+        "and.w   %[inValue],     %[readMask],       %[inValue],    ror %[readShift]        \n\t"  // inValue = (inValue << (from TDO-bit to 31th-bit)) & ( 1 << 31)
         "orr.w   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
 
 
@@ -98,15 +99,15 @@ namespace jtag {
           [count]           "+r"(count),
           [outValue]        "+r"(outValue),
           [outValueTck]     "+r"(outValueTck),
-          [inValue]         "+r"(inValue)
+          [inValue]         "+r"(inValue),
+          [writeValue]      "+r"(writeValue)
 
         // Inputs
         : [gpioOutAddr]     "r"(addressWrite),
           [gpioInAddr]      "r"(addressRead),
           [writeMask]       "r"(writeMask),
-          [writeValue]      "r"(writeValue),     // only input?
-          [writeShiftRight] "M"(32-WHAT_SIGNAL), // Shifting to left can be achieved by 32-N shifting to right
-          [readShift]       "M"(PIN_E_TDO + 1),  // Shifting to left TDO bit to the 31th (MSB) bit can be achieved with TDO + 1 shift to the right
+          [writeShiftRight] "M"(32-WHAT_SIGNAL),  // Shifting to left can be achieved by 32-N shifting to right
+          [readShift]       "M"(PIN_E_TDO + 1),   // Shifting to left TDO bit to the 31th (MSB) bit can be achieved with TDO + 1 shift to the right
           [readMask]        "r"(readMask),        // Masking the 31th (MSB) bit as we are shifting it already
           [clock_mask]      "I"(powerOfTwo<PIN_E_TCK>()),
           [resetValue]      "I"(nTRSTvalue << PIN_E_nTRST)
