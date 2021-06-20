@@ -24,7 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "jtag_c_connector.h"
-//#include "usbd_hid.h"
+#include "usbd_customhid.h"
 #include "jtag_global.h"
 
 /* USER CODE END Includes */
@@ -171,12 +171,24 @@ int main(void)
     }
     HAL_Delay(100);
 
-//    static uint8_t buf[4] = {0};
-//    buf[1] = 7;
-//    buf[2] = 7;
-//
-//    USBD_HID_SendReport (&hUsbDeviceHS, buf, 4);
-//    HAL_Delay(50);
+    USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceHS);
+
+    uint8_t requestBuf[JTAG_USB_REPORT_SIZE + 16] = { 0 };
+    uint8_t responseBuf[JTAG_USB_REPORT_SIZE]    = { 0 };
+
+    USBD_CUSTOM_HID_HandleTypeDef *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)hUsbDeviceHS.pClassData;
+
+    uint32_t* req = (uint32_t *)requestBuf;
+    uint32_t* res = (uint32_t *)responseBuf;
+
+    memcpy(req, hhid->Report_buf, 32);
+
+    jtag_usb_parseQueue(req, res);
+
+    uint8_t* res8 = (uint8_t *)responseBuf;
+
+    USBD_CUSTOM_HID_SendReport(&hUsbDeviceHS, res8, 32);
+    HAL_Delay(50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
