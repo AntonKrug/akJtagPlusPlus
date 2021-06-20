@@ -24,7 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "jtag_c_connector.h"
-#include "usbd_hid.h"
+//#include "usbd_hid.h"
 #include "jtag_global.h"
 
 /* USER CODE END Includes */
