@@ -45,7 +45,7 @@ void jtag_loop() {
 
   jtag::tap::resetSM();  // Somewhat redundant, after target reset the tap would be in the reset anyway
   jtag::tap::stateMove(jtag::tap::state_e::ShiftDr);
-  uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0x0000'0000);
+  uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0xdead'beef);
 
   uint32_t* req = requestBuf;
   uint32_t* res = responseBuf;
