@@ -148,6 +148,7 @@ int main(void)
   BSP_LCD_SetBackColor(LCD_COLOR_DARKMAGENTA);
   BSP_LCD_SetTextColor(LCD_COLOR_DARKMAGENTA);
   BSP_LCD_FillRect(5, 200, 100, 40);
+  HAL_Delay(100);
   BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
   BSP_LCD_DisplayString(30, 220, "Scan ID");
 
