@@ -30,7 +30,7 @@ void jtag_setup() {
 }
 
 
-uint32_t requestBuf[JTAG_USB_REPORT_SIZE + 1] = { 0 };
+uint32_t requestBuf[JTAG_USB_REPORT_SIZE + 4] = { 0 };
 uint32_t responseBuf[JTAG_USB_REPORT_SIZE]    = { 0 };
 
 
