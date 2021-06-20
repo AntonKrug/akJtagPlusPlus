@@ -55,7 +55,18 @@ namespace jtag {
       uint32_t inValue      = 0;         // Internal register to read raw values from GPIO and then masked/shifted correctly into the retValue
       uint32_t retValue     = 0;         // Output variable returning content from the TDI pin (driven from the inValue)
 
+      // Normal flow (in-order)
+      // - Calculate low TCK value and push it
+      // - Calculate high TCK value and push it
+      // - Read input TDO pin and shift it to the return register (push it from MSB as it needs to be reversed)
+      // - Keep looping until finished (count the counter do branching which takes cycles)
+
+      // Because the high part of TCK takes too long (even the calculation of low TCK happens in the high TCK,
+      // before it's being pushed as low TCK) and to make 50% duty cycle the low TCK would have to be slow down.
+      // Instead a lot of parts are happening out of order just so the high TCK spends as little time as possible.
+      // This means that few things are calculated a iteration ahead, or iteration after
       asm volatile (
+        // Preload few registers before we start the loop
         "and.w   %[outValue],    %[writeMask],      %[writeValue], ror %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
         "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
 
@@ -83,7 +94,7 @@ namespace jtag {
         // High part of the TCK + sample
         "str.w   %[outValueTck], [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
         "subs.w  %[count],       #1                                                        \n\t"  // count--
-        "nop                                                                               \n\t"
+        "nop                                                                               \n\t"  // balancing the high part of TCK to be 50% duty cycle
         "ldr.w   %[inValue],     [%[gpioInAddr]]                                           \n\t"  // inValue = GPIO
         "bne     repeatForEachBit%=                                                        \n\t"  // if (count != 0) then  repeatForEachBit
 
