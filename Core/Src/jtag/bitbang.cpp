@@ -80,10 +80,11 @@ namespace jtag {
 
 
         // High part of the TCK + sample
-        "str.w   %[outValue],    [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
+        "str.w   %[outValueTck], [%[gpioOutAddr]]                                          \n\t"  // GPIO = outValue
         "subs.w  %[count],       #1                                                        \n\t"  // count--
+        "nop                                                                               \n\t"
         "ldr.w   %[inValue],     [%[gpioInAddr]]                                           \n\t"  // inValue = GPIO
-        "bne.w repeatForEachBit%=                                                          \n\t"  // if (count != 0) then  repeatForEachBit
+        "bne     repeatForEachBit%=                                                        \n\t"  // if (count != 0) then  repeatForEachBit
 
         "cpsie if                                                                          \n\t"  // Enable IRQ, the critical section finished
 
