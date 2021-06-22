@@ -106,7 +106,8 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_HS[USBD_CUSTOM_HID_REPORT_DES
    0x91, 0x02,       // output (data, var, abs)
    0x95, 0x01,       // report count (1)
    0x09, 0x01,       // usage (undefined)
-   0xb1, 0x02,       // feature (data, var, abs)  /* USER CODE END 1 */
+   0xb1, 0x02,       // feature (data, var, abs)
+   /* USER CODE END 1 */
    0xC0    /*     END_COLLECTION             */
 };
 /* USER CODE BEGIN PRIVATE_VARIABLES */
