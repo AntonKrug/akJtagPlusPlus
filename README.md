@@ -13,9 +13,9 @@ Limited to only minimalistic official (vanila) JTAG specification (no custom ven
 
 The JTAG signals are bitbanged in SW, but written in assembly to make sure that the duty cycle stays the way it's expected as C/C++ can produce fast code, but it wouldn't gurantee the timing of the signals. In my assembly the sampling of read signals is happening around 2/3 of the clock period.
 
-Depending on the revision the specifics sometimes change, but I try to keep it around 9MHz and around 50% duty cycle. For example if I wanted to have 8MHz exactly, then I couldn't have exact 50% duty cycle, because 168MHz / 8MHz is 21 clocks per period and can't be split evenly to 50:50 and small deviation from 50% duty cycle is necesary for some TCK frequencies.
+Currently the TCK runs 10.5MHz and around 50% duty cycle. For example if I wanted to have 8MHz exactly, then I couldn't have exact 50% duty cycle, because 168MHz / 8MHz is 21 clocks per period and can't be split evenly to 50:50 and small deviation from 50% duty cycle is necesary for some TCK frequencies.
 
-![scope](../assets/images/tck-50.png)
+![scope](../assets/images/tck-10500-50.png)
 
 # Build
 
