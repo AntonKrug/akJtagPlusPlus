@@ -36,16 +36,19 @@ namespace jtag {
     }
 
 
-    // GPIOE->ODR => GPIOE_BASE + 0x14
-    // GPIOE->ODR => AHB1PERIPH_BASE + 0x1000UL + 0x14
-    // GPIOE->ODR => PERIPH_BASE + 0x00020000UL + 0x1000UL + 0x14
-    // GPIOE->ODR => 0x40000000 + 0x00020000UL + 0x1000UL + 0x14 => 0x40021014
     template<uint8_t WHAT_SIGNAL, uint8_t nTRSTvalue>
     __attribute__((optimize("-Ofast")))
     uint32_t shiftAsmUltraSpeed(const uint32_t length, uint32_t writeValue) {
       // This has 9.363MHz TCK at 50% duty cycle (removing the NOPs below can make it slightly faster and with duty 48% or below)
       uint32_t addressWrite = GPIOE_BASE + 0x14; // ODR register of GPIO port E
       uint32_t addressRead  = GPIOE_BASE + 0x10; // IDR register of GPIO port E
+
+      // Break down the ODR register address calculation for the GPIO port E
+      // GPIOE->ODR => GPIOE_BASE + 0x14
+      //            => AHB1PERIPH_BASE + 0x1000UL + 0x14
+      //            => PERIPH_BASE + 0x00020000UL + 0x1000UL + 0x14
+      //            => 0x40000000 + 0x00020000UL + 0x1000UL + 0x14
+      //            => 0x40021014 (GPIOE->ODR will be resolved to 0x40021014)
 
       uint32_t writeMask    = (1 << WHAT_SIGNAL);
       uint32_t readMask     = (1 << 31); // Masking the 31th (MSB) bit as we are shifting it already
