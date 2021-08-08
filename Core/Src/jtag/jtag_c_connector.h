@@ -1,5 +1,5 @@
 /*
- * c_connector.h
+ * Wrapper to enable C function to invoke C++
  *
  *  Created on: May 28, 2021
  *      Author: anton.krug@gmail.com

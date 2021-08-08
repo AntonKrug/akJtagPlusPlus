@@ -143,8 +143,6 @@ int main(void)
 
   jtag_setup();
 
-//  BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
-
   BSP_LCD_SetBackColor(LCD_COLOR_DARKMAGENTA);
   BSP_LCD_SetTextColor(LCD_COLOR_DARKMAGENTA);
   BSP_LCD_FillRect(5, 200, 100, 40);
@@ -159,39 +157,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//    TS_StateTypeDef  TS_State;
-//    BSP_TS_GetState(&TS_State);
-//    if ((TS_State.TouchDetected) & (TS_State.X > 5) & (TS_State.Y > 200) & (TS_State.X < (5+200)) &  (TS_State.Y < (200+40)) )
-//    {
-//      jtag_loop();
-//    }
-
-    if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)) {
-      jtag_loop();
-    }
-    HAL_Delay(100);
-
-//    USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceHS);
-//
-//    uint8_t requestBuf[JTAG_USB_REPORT_SIZE + 16] = { 0 };
-//    uint8_t responseBuf[JTAG_USB_REPORT_SIZE]    = { 0 };
-//
-//    USBD_CUSTOM_HID_HandleTypeDef *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)hUsbDeviceHS.pClassData;
-//
-//    uint32_t* req = (uint32_t *)requestBuf;
-//    uint32_t* res = (uint32_t *)responseBuf;
-//
-//    memcpy(req, hhid->Report_buf, 32);
-//
-//    jtag_usb_parseQueue(req, res);
-//
-//    uint8_t* res8 = (uint8_t *)responseBuf;
-//
-//    USBD_CUSTOM_HID_SendReport(&hUsbDeviceHS, res8, 32);
-//    HAL_Delay(50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    // Do not do anything in the main loop because the firmware will only respond on the USB callbacks
   }
   /* USER CODE END 3 */
 }

@@ -102,7 +102,7 @@ namespace jtag {
 
       const display_entry_s displayEntries[tap::state_e_size] = {
           { "Test Logic Reset", LCD_COLOR_BROWN,      rowFirstX,  0 * lineHeight + lineSpacing },
-          { "Run Test / Idle",  LCD_COLOR_BROWN,      rowFirstX,  1 * lineHeight + lineSpacing  },
+          { "Run Test / Idle",  LCD_COLOR_BROWN,      rowFirstX,  1 * lineHeight + lineSpacing },
 
           { "Select DR Scan",   LCD_COLOR_DARKBLUE,   rowFirstX,  3 * lineHeight },
           { "Shift DR",         LCD_COLOR_DARKBLUE,   rowFirstX,  4 * lineHeight },

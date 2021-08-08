@@ -1,5 +1,5 @@
 /*
- * data.cpp
+ * JTAG bit-bang implementation
  *
  *  Created on: May 28, 2021
  *      Author: anton.krug@gmail.com
@@ -66,7 +66,7 @@ namespace jtag {
       // Instead a lot of parts are happening out of order just so the high TCK spends as little time as possible.
       // This means that few things are calculated a iteration ahead, or iteration after
       asm volatile (
-        // Preload few registers before we start the loop
+        // Pre-load output register before we start the loop
         "and.w   %[outValue],    %[writeMask],      %[writeValue], ror %[writeShiftRight]  \n\t"  // outValue = (writeValue << TDI/TMS) &  (1 << TDI/TMS-Offset)
         "orr.w   %[outValue],    %[outValue],       %[resetValue]                          \n\t"  // outValue = outValue | (nRSTvlaue << nRST)
 
@@ -82,7 +82,7 @@ namespace jtag {
         "and.w   %[inValue],     %[readMask],       %[inValue],    ror %[readShift]        \n\t"  // inValue = (inValue << (from TDO-bit to 31th-bit)) & ( 1 << 31)
         "orr.w   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
 
-        // Prepare things that are needed toward the end of the loop, but can be done now
+        // Prepare things that are needed toward the end of the loop, but can be executed now
         "orr.w   %[outValueTck], %[outValue],       %[clock_mask]                          \n\t"  // outValue = outValue | (1 << TCK) - setting TCK high
         "lsr.w   %[writeValue],  %[writeValue],     #1                                     \n\t"  // writeValue = writeValue >> 1
 
@@ -100,7 +100,7 @@ namespace jtag {
 
         "cpsie if                                                                          \n\t"  // Enable IRQ, the critical section finished
 
-        // Process the inValue as normally it's done in the next iteration of the loop
+        // Process the last inValue as normally it's done in the next iteration of the loop but here we are finished with the loop
         "and.w   %[inValue],     %[readMask],       %[inValue],    ror %[readShift]        \n\t"  // inValue = (inValue << (from TDO-bit to 31th-bit)) & ( 1 << 31)
         "orr.w   %[retValue],    %[inValue],        %[retValue],   lsr #1                  \n\t"  // retValue = (retValue >> 1) | inValue
 

@@ -1,5 +1,5 @@
 /*
- * c_connector.cpp
+ * Wrapper to enable C function to invoke C++
  *
  *  Created on: May 28, 2021
  *      Author: anton.krug@gmail.com
@@ -40,12 +40,13 @@ requestAndResponse jtag_usb_parseQueue(uint32_t *req, uint32_t *res) {
 
 
 void jtag_loop() {
+  // Just experiments to test various features
 
   jtag::bitbang::resetSignal(0, -1);
 
   jtag::tap::resetSM();  // Somewhat redundant, after target reset the tap would be in the reset anyway
   jtag::tap::stateMove(jtag::tap::state_e::ShiftDr);
-  uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0xdead'beef);
+  uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0xdead'beef); // No need to shift any data to the target, 0s are fine, but on the scope/logic analyzer I prefer to see some activity
 
   uint32_t* req = requestBuf;
   uint32_t* res = responseBuf;
