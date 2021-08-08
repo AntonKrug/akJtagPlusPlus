@@ -204,7 +204,7 @@ namespace jtag {
       // Handling only non-zero buffers means that I can read the first command blindly
       uint32_t commandId = *req;
 
-      while (commandId != 0 && commandId < api_e_size)  {
+      while ((0 != commandId) && (commandId < api_e_size)) {
         // Advance the pointer in the request stream, so the invoked functions
         // will already have request stream pointing to their arguments (and not their commandId)
         req++;
