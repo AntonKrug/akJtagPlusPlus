@@ -26,16 +26,14 @@ namespace jtag {
     uint8_t drOpcodeLen = 32;
 
 
-    requestAndResponse stop(uint32_t *req, uint32_t *res) {
-//      processBuffer = false;
+    requestAndResponse nop(uint32_t *req, uint32_t *res) {
       return JTAG_COMBINE_REQ_RES(req, res);
     }
 
     requestAndResponse failure(uint32_t *req, uint32_t *res) {
-      // API failure handler is currently the same as the stop implementation,
+      // API failure handler is currently the same as the NOP implementation,
       // however it can be used with a debugger to separate the regular valid
       // stop command from a abnormal API call
-      processBuffer = false;
       return JTAG_COMBINE_REQ_RES(req, res);
     }
 
@@ -184,8 +182,8 @@ namespace jtag {
       api_e commandId = static_cast<api_e>(COMMAND_ID & 0b0000'1111);
 
       switch (commandId) {
-        case api_e::end_processing:
-          ret = stop(req, res);
+        case api_e::nop:
+          ret = nop(req, res);
           break;
 
         case api_e::ping:
@@ -245,7 +243,7 @@ namespace jtag {
     }
 
 
-    const auto handlers = populateApiTable<0>();
+    const std::array<commandHandler, 256> handlers = populateApiTable<0>();
 
   }
 }
