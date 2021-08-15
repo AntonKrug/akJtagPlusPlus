@@ -9,7 +9,7 @@
 #include <array>
 
 #include "usb.hpp"
-#include "bitbang.hpp"
+#include "api.hpp"
 
 
 namespace jtag {
@@ -33,7 +33,7 @@ namespace jtag {
         req++;
 
         // Invoke the command from the API function table
-        requestAndResponse combined = handlers[commandId](req, res);
+        requestAndResponse combined = jtag::api::handlers[commandId](req, res);
 
         // Take the combined returned value and assign it back to the request and response pointers
         JTAG_DECOMPOSE_REQ_RES(combined, req, res);
