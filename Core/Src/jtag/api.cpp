@@ -179,42 +179,42 @@ namespace jtag {
       requestAndResponse ret;
 
       // Take only the lower 4-bits from the command and turn it into a ENUM
-      api_e commandId = static_cast<api_e>(COMMAND_ID & 0b0000'1111);
+      command_e commandId = static_cast<command_e>(COMMAND_ID & 0b0000'1111);
 
       switch (commandId) {
-        case api_e::nop:
+        case command_e::nop:
           ret = nop(req, res);
           break;
 
-        case api_e::ping:
+        case command_e::ping:
           ret = ping(req, res);
           break;
 
-        case api_e::reset:
+        case command_e::reset:
           ret = reset(req, res);
           break;
 
-        case api_e::stateMove:
+        case command_e::stateMove:
           ret = stateMove(req, res);
           break;
 
-        case api_e::pathMove:
+        case command_e::pathMove:
           ret = pathMove(req, res);
           break;
 
-        case api_e::runTest:
+        case command_e::runTest:
           ret = runTest(req, res);
           break;
 
-        case api_e::setIrOpcodeLen:
+        case command_e::setIrOpcodeLen:
           ret = setIrOpcodeLen(req, res);
           break;
 
-        case api_e::setDrOpcodeLen:
+        case command_e::setDrOpcodeLen:
           ret = setDrOpcodeLen(req, res);
           break;
 
-        case api_e::scan:
+        case command_e::scan:
           // TODO: implement
           break;
 
