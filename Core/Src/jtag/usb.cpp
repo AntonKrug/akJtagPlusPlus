@@ -22,9 +22,8 @@ namespace jtag {
       // Handling only non-zero buffers means that I can read the first command blindly
       uint32_t commandIds = *req;
 
-      processBuffer = true;
-
-      while (processBuffer) {
+      // Repeat while still we have some IDs in the combined ID
+      while (commandIds) {
         uint8_t commandId = commandIds & 0xff;  // take only the lowest 8-bit from the IDs
         commandIds = commandIds >> 8;           // move the IDs so next time the next 8-bits can be loaded
 
