@@ -11,7 +11,6 @@
 #include <cstdint>
 
 #include "jtag_global.h"
-
 #include "combined_request_response.h"
 
 #ifdef __cplusplus
