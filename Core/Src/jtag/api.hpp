@@ -26,8 +26,8 @@ namespace jtag {
 
 
     enum class scanBitsE:uint8_t {
-      isDr          = 4,
-      isReadWrite   = 5,
+      isReadWrite   = 4,
+      isDr          = 5,
       isLenArgument = 6,
       isLenOver32   = 7
     };
@@ -52,8 +52,8 @@ namespace jtag {
 
       // Permutations of the 4-bits:
 
-      // 4bit - IR/DR scan
-      // 5bit - Write/Read+Write
+      // 4bit - Write/Read+Write
+      // 5bit - IR/DR scan
       // 6bit - OpCodeLen Global / Argument
       // 7bit - OpCodeLen under or equal to 32-bit / OpCodeLen above 32-bit (but under or equal to 64-bit)
 
