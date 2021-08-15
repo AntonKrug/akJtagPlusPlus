@@ -25,7 +25,7 @@ namespace jtag {
     extern const std::array<commandHandler, 256> handlers;
 
 
-    enum class scan_bits_e:uint8_t {
+    enum class scanBitsE:uint8_t {
       isDr          = 4,
       isReadWrite   = 5,
       isLenArgument = 6,
@@ -33,7 +33,7 @@ namespace jtag {
     };
 
 
-    enum class command_e:uint32_t {
+    enum class commandE:uint32_t {
       nop,            // do not do anything, process another call, or eventually stop
 
       ping,           // respond back what version this FW is
@@ -84,7 +84,7 @@ namespace jtag {
     };
 
 
-    constexpr uint32_t api_e_size = static_cast<uint32_t>(command_e::last_enum);
+    constexpr uint32_t api_e_size = static_cast<uint32_t>(commandE::last_enum);
 
     static_assert((api_e_size + (1u << 4u))<= 256u, "All API calls need to leave enough space for 4-bits (16 combinations) of SCAN commands");
 

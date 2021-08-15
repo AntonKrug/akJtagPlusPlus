@@ -45,7 +45,7 @@ void jtag_loop() {
   jtag::bitbang::resetSignal(0, -1);
 
   jtag::tap::resetSM();  // Somewhat redundant, after target reset the tap would be in the reset anyway
-  jtag::tap::stateMove(jtag::tap::state_e::ShiftDr);
+  jtag::tap::stateMove(jtag::tap::stateE::ShiftDr);
   uint32_t IDcode = jtag::bitbang::shiftTdi(32, 0xdead'beef); // No need to shift any data to the target, 0s are fine, but on the scope/logic analyzer I prefer to see some activity
 
   uint32_t* req = requestBuf;
@@ -60,14 +60,14 @@ void jtag_loop() {
   BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
   BSP_LCD_DisplayString(5, 270, buf);
 
-  for (int number = 0; number < jtag::tap::state_e_size; number++) {
-    jtag::tap::stateMove(static_cast<jtag::tap::state_e>(number));
+  for (int number = 0; number < jtag::tap::stateESize; number++) {
+    jtag::tap::stateMove(static_cast<jtag::tap::stateE>(number));
     jtag::bitbang::shiftTms({8, 0b11111111});
     jtag::bitbang::shiftTmsRaw(32, number);
   }
 
-  jtag::tap::stateMove(jtag::tap::state_e::RunTestIdle);
-  jtag::tap::stateMove(jtag::tap::state_e::UpdateIr);
+  jtag::tap::stateMove(jtag::tap::stateE::RunTestIdle);
+  jtag::tap::stateMove(jtag::tap::stateE::UpdateIr);
 
   jtag::tap::telemetry::statsDisplayCallsAndTime();
 }

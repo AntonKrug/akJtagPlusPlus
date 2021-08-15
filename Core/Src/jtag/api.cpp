@@ -16,7 +16,7 @@ namespace jtag {
 
   namespace api {
 
-    tap::state_e defaultEndState = tap::state_e::RunTestIdle;
+    tap::stateE defaultEndState = tap::stateE::RunTestIdle;
 
     // https://stackoverflow.com/questions/45650099
     uint8_t irOpcodeLen = 4;
@@ -60,7 +60,7 @@ namespace jtag {
 
 
     requestAndResponse stateMove(uint32_t *req, uint32_t *res) {
-      auto endState = (tap::state_e)(*req);
+      auto endState = (tap::stateE)(*req);
       req++;
 
       defaultEndState = endState;
@@ -69,7 +69,7 @@ namespace jtag {
 
 
     requestAndResponse pathMove(uint32_t *req, uint32_t *res) {
-      auto endState = (tap::state_e)(*req);
+      auto endState = (tap::stateE)(*req);
       req++;
 
       tap::stateMove(endState);
@@ -82,7 +82,7 @@ namespace jtag {
       req++;
 
       for (uint32_t i = 0; i < count; i++) {
-        tap::stateMove(tap::state_e::RunTestIdle);
+        tap::stateMove(tap::stateE::RunTestIdle);
       }
       return JTAG_COMBINE_REQ_RES(req, res);
     }
@@ -105,52 +105,52 @@ namespace jtag {
     namespace scan {
 
 
-      enum class capture_e:bool {
+      enum class captureE:bool {
         ir = 0,
         dr = 1
       };
 
 
-      enum class access_e:bool {
+      enum class accessE:bool {
         write        = 0,
         readAndWrite = 1
       };
 
 
-      enum class opcodeLength_e:bool {
+      enum class opcodeLengthE:bool {
         useGlobal      = 0,
         readFromStream = 1
       };
 
 
-      enum class endstate_e:bool {
+      enum class endstateE:bool {
         useGlobal      = 0,
         readFromStream = 1
       };
 
 
-      enum class lenSizeFits_e:bool {
+      enum class lenSizeFitsE:bool {
         fitsInto32  = 0,
         over32      = 1
       };
 
 
-      template<capture_e capture, access_e access, endstate_e endstate, opcodeLength_e opcodeLength, lenSizeFits_e lenSize>
+      template<captureE capture, accessE access, endstateE endstate, opcodeLengthE opcodeLength, lenSizeFitsE lenSize>
       requestAndResponse generic(uint32_t *req, uint32_t *res) {
         // Arguments in the stream are DATA, [LEN], [END_STATE]
         uint32_t data = *req;
         req++;
 
-        if (capture == capture_e::ir) {
-          tap::stateMove(tap::state_e::ShiftIr);
+        if (capture == captureE::ir) {
+          tap::stateMove(tap::stateE::ShiftIr);
         } else {
-          tap::stateMove(tap::state_e::ShiftDr);
+          tap::stateMove(tap::stateE::ShiftDr);
         }
 
         uint32_t length;
-        if (opcodeLength == opcodeLength_e::useGlobal) {
+        if (opcodeLength == opcodeLengthE::useGlobal) {
           // Use the global length
-          length = (capture == capture_e::ir) ? irOpcodeLen : drOpcodeLen;
+          length = (capture == captureE::ir) ? irOpcodeLen : drOpcodeLen;
         } else {
           // Specified your own length in the packet
           length = *req;
@@ -159,18 +159,18 @@ namespace jtag {
 
         uint32_t read = bitbang::shiftTdi(length, data);
 
-        if (access == access_e::readAndWrite) {
+        if (access == accessE::readAndWrite) {
           // Send back to the USB what you read
           *res=read;
           res++;
         }
 
-        if (endstate == endstate_e::useGlobal) {
+        if (endstate == endstateE::useGlobal) {
           // Go to the globally specified end state
           tap::stateMove(defaultEndState);
         } else {
           // Read from the request packet what end state should go to
-          auto endState = (tap::state_e)(*req);
+          auto endState = (tap::stateE)(*req);
           req++;
           tap::stateMove(endState);
         }
@@ -185,60 +185,61 @@ namespace jtag {
       requestAndResponse ret;
 
       // Take only the lower 4-bits from the command and turn it into a ENUM
-      command_e commandId = static_cast<command_e>(COMMAND_ID & 0b0000'1111);
+      commandE commandId = static_cast<commandE>(COMMAND_ID & 0b0000'1111);
 
       switch (commandId) {
-        case command_e::nop: {
+
+        case commandE::nop: {
           ret = nop(req, res);
           break;
         }
 
-        case command_e::ping: {
+        case commandE::ping: {
           ret = ping(req, res);
           break;
         }
 
-        case command_e::reset: {
+        case commandE::reset: {
           ret = reset(req, res);
           break;
         }
 
-        case command_e::stateMove: {
+        case commandE::stateMove: {
           ret = stateMove(req, res);
           break;
         }
 
-        case command_e::pathMove: {
+        case commandE::pathMove: {
           ret = pathMove(req, res);
           break;
         }
 
-        case command_e::runTest: {
+        case commandE::runTest: {
           ret = runTest(req, res);
           break;
         }
 
-        case command_e::setIrOpcodeLen: {
+        case commandE::setIrOpcodeLen: {
           ret = setIrOpcodeLen(req, res);
           break;
         }
 
-        case command_e::setDrOpcodeLen: {
+        case commandE::setDrOpcodeLen: {
           ret = setDrOpcodeLen(req, res);
           break;
         }
 
-        case command_e::scan: {
+        case commandE::scan: {
           // Take the higher 4-bits and calculate what SCAN variation it would be
           const uint32_t scanVariation = COMMAND_ID & 0b1111'0000;
 
           // Break up the SCAN variation into its components
-          const auto isDr           = static_cast<scan::capture_e>(     scanVariation & (1u << static_cast<uint8_t>(scan_bits_e::isDr)));
-          const auto isReadWrite    = static_cast<scan::access_e>(      scanVariation & (1u << static_cast<uint8_t>(scan_bits_e::isReadWrite)));
-          const auto isLenOpcode    = static_cast<scan::opcodeLength_e>(scanVariation & (1u << static_cast<uint8_t>(scan_bits_e::isLenArgument)));
-          const auto isLenFitInto32 = static_cast<scan::lenSizeFits_e>( scanVariation & (1u << static_cast<uint8_t>(scan_bits_e::isLenOver32)));
+          const auto isDr           = static_cast<scan::captureE>(     scanVariation & (1u << static_cast<uint8_t>(scanBitsE::isDr)));
+          const auto isReadWrite    = static_cast<scan::accessE>(      scanVariation & (1u << static_cast<uint8_t>(scanBitsE::isReadWrite)));
+          const auto isLenOpcode    = static_cast<scan::opcodeLengthE>(scanVariation & (1u << static_cast<uint8_t>(scanBitsE::isLenArgument)));
+          const auto isLenFitInto32 = static_cast<scan::lenSizeFitsE>( scanVariation & (1u << static_cast<uint8_t>(scanBitsE::isLenOver32)));
 
-          scan::generic<isDr, isReadWrite, scan::endstate_e::useGlobal, isLenOpcode, isLenFitInto32>(req, res);
+          scan::generic<isDr, isReadWrite, scan::endstateE::useGlobal, isLenOpcode, isLenFitInto32>(req, res);
           break;
         }
 

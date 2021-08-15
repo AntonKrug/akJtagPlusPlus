@@ -20,9 +20,9 @@ namespace jtag {
 
 	namespace tap {
 
-	  state_e currentState = state_e::TestLogicReset;
+	  stateE currentState = stateE::TestLogicReset;
 
-		tmsMove tapMoves [state_e_size][state_e_size] = {
+		tmsMove tapMoves [stateESize][stateESize] = {
 
 		    // Lookup table with how many TCK clocks and what TMS bits has to be shifted to move from one
 		    // state to the other state inside the TAP state machine
@@ -55,11 +55,11 @@ namespace jtag {
 		void resetSM() {
 		  bitbang::shiftTms({8, 0b11111111});
 
-		  currentState = state_e::TestLogicReset;
+		  currentState = stateE::TestLogicReset;
 		}
 
 
-		void stateMove(state_e whereToMove) {
+		void stateMove(stateE whereToMove) {
 		  auto currentStateInt      = static_cast<int>(currentState);
 		  auto whereToMoveStateInt  = static_cast<int>(whereToMove);
 		  auto whatToShift          = tapMoves[currentStateInt][whereToMoveStateInt];
@@ -100,7 +100,7 @@ namespace jtag {
       const uint16_t lineHeight  = fontHeight + lineSpacing;
 
 
-      const display_entry_s displayEntries[tap::state_e_size] = {
+      const display_entry_s displayEntries[tap::stateESize] = {
           { "Test Logic Reset", LCD_COLOR_BROWN,      rowFirstX,  0 * lineHeight + lineSpacing },
           { "Run Test / Idle",  LCD_COLOR_BROWN,      rowFirstX,  1 * lineHeight + lineSpacing },
 
@@ -120,7 +120,7 @@ namespace jtag {
       };
 
 
-      std::array<stats_entry_s, tap::state_e_size> statsEntries = { 0 };
+      std::array<stats_entry_s, tap::stateESize> statsEntries = { 0 };
 
 
       void displayStateMachineDiagram() {
@@ -139,7 +139,7 @@ namespace jtag {
       }
 
 
-      void statsCallMade(tap::state_e state) {
+      void statsCallMade(tap::stateE state) {
         auto stateInt = static_cast<int>(state);
 
         statsEntries[stateInt].calls++;
@@ -147,7 +147,7 @@ namespace jtag {
 
 
       void statsClearAll() {
-        for (int i=0; i<tap::state_e_size; i++) {
+        for (int i=0; i<tap::stateESize; i++) {
           statsEntries[i].calls = 0;
           statsEntries[i].time  = 0;
         }
@@ -163,7 +163,7 @@ namespace jtag {
         }
 
         BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-        for (int i=0; i<tap::state_e_size; i++) {
+        for (int i=0; i<tap::stateESize; i++) {
           auto diagramEntry = displayEntries[i];
 
           BSP_LCD_DrawHLine(diagramEntry.x -2, diagramEntry.y + fontHeight + 2 + 0, blockWidth + 4);
@@ -171,7 +171,7 @@ namespace jtag {
         }
 
         BSP_LCD_SetTextColor(LCD_COLOR_RED);
-        for (int i=0; i < tap::state_e_size; i++) {
+        for (int i=0; i < tap::stateESize; i++) {
           auto diagramEntry = displayEntries[i];
           auto statEntry    = statsEntries[i];
           auto lineSize     = ((blockWidth + 4) * statEntry.calls) / callsMax;

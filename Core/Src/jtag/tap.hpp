@@ -23,7 +23,7 @@ namespace jtag {
 
 
     // https://image.slidesharecdn.com/jtagpresentation-100723072934-phpapp01/95/jtag-presentation-17-728.jpg?cb=1279870813
-    enum class state_e:uint32_t {
+    enum class stateE:uint32_t {
       TestLogicReset,
       RunTestIdle,
       SelectDrScan,
@@ -43,9 +43,9 @@ namespace jtag {
       LAST_ENUM
     };
 
-    const int state_e_size = static_cast<int>(state_e::LAST_ENUM);
+    const int stateESize = static_cast<int>(stateE::LAST_ENUM);
 
-    extern state_e currentState;
+    extern stateE currentState;
 
     struct tmsMove {
       uint8_t amountOfBitsToShift;
@@ -54,11 +54,11 @@ namespace jtag {
 
 
     void resetSM(void);
-    void stateMove(state_e whereToMove);
+    void stateMove(stateE whereToMove);
 
 #ifdef JTAG_TAP_TELEMETRY
     namespace telemetry {
-      void statsCallMade(tap::state_e state);
+      void statsCallMade(tap::stateE state);
 
       void displayStateMachineDiagram(void);
 
