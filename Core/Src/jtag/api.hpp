@@ -56,25 +56,25 @@ namespace jtag {
       // 6bit - OpCodeLen Global / Argument
       // 7bit - OpCodeLen under or equal to 32-bit / OpCodeLen above 32-bit (but under or equal to 64-bit)
 
-      // Read and write IR, 1 argument  uint32_t (uint32_t data) => (len and endState are global),      len <= 32
       // Write IR,          1 argument  void     (uint32_t data) => (len and endState are global),      len <= 32
-      // Read and write DR, 1 argument  uint32_t (uint32_t data) => (len and endState are global),      len <= 32
+      // Read and write IR, 1 argument  uint32_t (uint32_t data) => (len and endState are global),      len <= 32
       // Write DR,          1 argument  void     (uint32_t data) => (len and endState are global),      len <= 32
+      // Read and write DR, 1 argument  uint32_t (uint32_t data) => (len and endState are global),      len <= 32
       //
-      // Read and write IR, 2 arguments uint32_t (uint32_t len, uint32_t data) => (endState is global), len <= 32
       // Write IR,          2 arguments void     (uint32_t len, uint32_t data) => (endState is global), len <= 32
-      // Read and write DR, 2 arguments uint32_t (uint32_t len, uint32_t data) => (endState is global), len <= 32
+      // Read and write IR, 2 arguments uint32_t (uint32_t len, uint32_t data) => (endState is global), len <= 32
       // Write DR,          2 arguments void     (uint32_t len, uint32_t data) => (endState is global), len <= 32
+      // Read and write DR, 2 arguments uint32_t (uint32_t len, uint32_t data) => (endState is global), len <= 32
 
-      // Read and write IR, 1 argument  uint64_t (uint64_t data) => (len and endState are global),      64 >= len > 32
       // Write IR,          1 argument  void     (uint64_t data) => (len and endState are global),      64 >= len > 32
-      // Read and write DR, 1 argument  uint64_t (uint64_t data) => (len and endState are global),      64 >= len > 32
+      // Read and write IR, 1 argument  uint64_t (uint64_t data) => (len and endState are global),      64 >= len > 32
       // Write DR,          1 argument  void     (uint64_t data) => (len and endState are global),      64 >= len > 32
+      // Read and write DR, 1 argument  uint64_t (uint64_t data) => (len and endState are global),      64 >= len > 32
       //
-      // Read and write IR, 2 arguments uint64_t (uint32_t len, uint64_t data) => (endState is global), 64 >= len > 32
       // Write IR,          2 arguments void     (uint32_t len, uint64_t data) => (endState is global), 64 >= len > 32
-      // Read and write DR, 2 arguments uint64_t (uint32_t len, uint64_t data) => (endState is global), 64 >= len > 32
+      // Read and write IR, 2 arguments uint64_t (uint32_t len, uint64_t data) => (endState is global), 64 >= len > 32
       // Write DR,          2 arguments void     (uint32_t len, uint64_t data) => (endState is global), 64 >= len > 32
+      // Read and write DR, 2 arguments uint64_t (uint32_t len, uint64_t data) => (endState is global), 64 >= len > 32
 
       // 3 argument scans shouldn't be needed as changing the endState on each scan is unlikely
       // and even if it would happen, the existing commands can achieve the same with just 1 word overhead
