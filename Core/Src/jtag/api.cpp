@@ -106,30 +106,36 @@ namespace jtag {
 
 
       enum class capture_e:bool {
-        ir,
-        dr
+        ir = 0,
+        dr = 1
       };
 
 
       enum class access_e:bool {
-        write,
-        readAndWrite
+        write        = 0,
+        readAndWrite = 1
       };
 
 
       enum class opcodeLength_e:bool {
-        useGlobal,
-        readFromStream
+        useGlobal      = 0,
+        readFromStream = 1
       };
 
 
       enum class endstate_e:bool {
-        useGlobal,
-        readFromStream
+        useGlobal      = 0,
+        readFromStream = 1
       };
 
 
-      template<capture_e capture, access_e access, endstate_e endstate, opcodeLength_e opcodeLength>
+      enum class lenSizeFits_e:bool {
+        fitsInto32  = 0,
+        over32      = 1
+      };
+
+
+      template<capture_e capture, access_e access, endstate_e endstate, opcodeLength_e opcodeLength, lenSizeFits_e lenSize>
       requestAndResponse generic(uint32_t *req, uint32_t *res) {
         // Arguments in the stream are DATA, [LEN], [END_STATE]
         uint32_t data = *req;
@@ -182,46 +188,66 @@ namespace jtag {
       command_e commandId = static_cast<command_e>(COMMAND_ID & 0b0000'1111);
 
       switch (commandId) {
-        case command_e::nop:
+        case command_e::nop: {
           ret = nop(req, res);
           break;
+        }
 
-        case command_e::ping:
+        case command_e::ping: {
           ret = ping(req, res);
           break;
+        }
 
-        case command_e::reset:
+        case command_e::reset: {
           ret = reset(req, res);
           break;
+        }
 
-        case command_e::stateMove:
+        case command_e::stateMove: {
           ret = stateMove(req, res);
           break;
+        }
 
-        case command_e::pathMove:
+        case command_e::pathMove: {
           ret = pathMove(req, res);
           break;
+        }
 
-        case command_e::runTest:
+        case command_e::runTest: {
           ret = runTest(req, res);
           break;
+        }
 
-        case command_e::setIrOpcodeLen:
+        case command_e::setIrOpcodeLen: {
           ret = setIrOpcodeLen(req, res);
           break;
+        }
 
-        case command_e::setDrOpcodeLen:
+        case command_e::setDrOpcodeLen: {
           ret = setDrOpcodeLen(req, res);
           break;
+        }
 
-        case command_e::scan:
-          // TODO: implement
+        case command_e::scan: {
+          // Take the higher 4-bits and calculate what SCAN variation it would be
+          const uint32_t scanVariation = COMMAND_ID & 0b1111'0000;
+
+          // Break up the SCAN variation into its components
+          const auto isDr           = static_cast<scan::capture_e>(     scanVariation & (1u << static_cast<uint8_t>(scan_bits_e::isDr)));
+          const auto isReadWrite    = static_cast<scan::access_e>(      scanVariation & (1u << static_cast<uint8_t>(scan_bits_e::isReadWrite)));
+          const auto isLenOpcode    = static_cast<scan::opcodeLength_e>(scanVariation & (1u << static_cast<uint8_t>(scan_bits_e::isLenArgument)));
+          const auto isLenFitInto32 = static_cast<scan::lenSizeFits_e>( scanVariation & (1u << static_cast<uint8_t>(scan_bits_e::isLenOver32)));
+
+          scan::generic<isDr, isReadWrite, scan::endstate_e::useGlobal, isLenOpcode, isLenFitInto32>(req, res);
           break;
+        }
 
-        default:
+        default: {
           // All invalid or unimplemented calls will cause failure
           ret = failure(req, res);
           break;
+        }
+
       }
       return ret;
     }

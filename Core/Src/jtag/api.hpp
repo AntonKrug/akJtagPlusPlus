@@ -25,6 +25,14 @@ namespace jtag {
     extern const std::array<commandHandler, 256> handlers;
 
 
+    enum class scan_bits_e:uint8_t {
+      isDr          = 4,
+      isReadWrite   = 5,
+      isLenArgument = 6,
+      isLenOver32   = 7
+    };
+
+
     enum class command_e:uint32_t {
       nop,            // do not do anything, process another call, or eventually stop
 
