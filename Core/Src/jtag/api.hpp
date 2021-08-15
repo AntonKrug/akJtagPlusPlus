@@ -37,20 +37,19 @@ namespace jtag {
       nop,            // do not do anything, process another call, or eventually stop
 
       ping,           // respond back what version this FW is
-      reset,          // trst or srst
-      setLed,
-      setTCK,         // set TCK speed
-      getTCK,         // get TCK speed
+      reset,          // trst or srst (bit 4 controls write/read, bit 5 to tell trst/srst and bit 6 to tell the state to write)
+      led,            // get and set TCK speed (bit 4 controls write/read)
+      tck,            // get and set TCK speed (bit 4 controls write/read)
 
       stateMove,      // Specify endState after commands (don't change TAP SM)
-      pathMove,       // move current state to the endstate (change TAP SM)
-      runTest,
+      pathMove,       // move current state to the end-state (change TAP SM)
+      runTest,        // loop inside the runTest state for (arg) amount of cycles
 
       setIrOpcodeLen, // max 32bits
       setDrOpcodeLen, // max 32bits
       scan,           // do all variations of scans, dedicated with 4-bits of API calls
 
-      // Permutations of the 4-bits:
+      // Permutations of the 4-bits for the scan command:
 
       // 4bit - Write/Read+Write
       // 5bit - IR/DR scan
@@ -77,7 +76,7 @@ namespace jtag {
       // Read and write DR, 2 arguments uint64_t (uint32_t len, uint64_t data) => (endState is global), 64 >= len > 32
       // Write DR,          2 arguments void     (uint32_t len, uint64_t data) => (endState is global), 64 >= len > 32
 
-      // 3 argument scans shouldn't be needed as changing the Opcode len on each scan is unlikely
+      // 3 argument scans shouldn't be needed as changing the endState on each scan is unlikely
       // and even if it would happen, the existing commands can achieve the same with just 1 word overhead
 
       last_enum
