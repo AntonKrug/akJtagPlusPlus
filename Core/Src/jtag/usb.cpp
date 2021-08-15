@@ -19,10 +19,10 @@ namespace jtag {
     bool processBuffer = true;
 
     requestAndResponse parseQueue(uint32_t *req, uint32_t *res) {
-      // Handling only non-zero buffers means that I can read the first command blindly
-      uint32_t commandIds = *req;
+      // Handling only non-zero buffers means that I can read the first group of commandIDs blindly
+      uint32_t commandIds = *req; // The 32-bit value contains four 8-bit command IDs
 
-      // Repeat while still we have some IDs in the combined ID
+      // Repeat while still we have some IDs in the combined ID (NOP is ID=0, multiple NOPs are still 0)
       while (commandIds) {
         uint8_t commandId = commandIds & 0xff;  // take only the lowest 8-bit from the IDs
         commandIds = commandIds >> 8;           // move the IDs so next time the next 8-bits can be loaded
