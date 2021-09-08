@@ -239,7 +239,7 @@ namespace jtag {
           const auto isLenOpcode    = static_cast<scan::opcodeLengthE>(scanVariation & (1u << static_cast<uint8_t>(scanBitsE::isLenArgument)));
           const auto isLenFitInto32 = static_cast<scan::lenSizeFitsE>( scanVariation & (1u << static_cast<uint8_t>(scanBitsE::isLenOver32)));
 
-          scan::generic<isDr, isReadWrite, scan::endstateE::useGlobal, isLenOpcode, isLenFitInto32>(req, res);
+          ret = scan::generic<isDr, isReadWrite, scan::endstateE::useGlobal, isLenOpcode, isLenFitInto32>(req, res);
           break;
         }
 
